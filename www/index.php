@@ -43,7 +43,7 @@ echo $contents; } ?>
 
 <!-- end of project description -->
 
-<p>For some details and examples, see the package vignette which can be found <a href="doc\prob.pdf"><strong>here</strong></a>. </p>
+<p>For some details and examples, see the package vignette which can be found <a href="doc/prob.pdf"><strong>here</strong></a>. </p>
 
 <p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
 <p>&nbsp;</p>
