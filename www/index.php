@@ -46,6 +46,23 @@ echo $contents; } ?>
 <p>For some details and examples, see the package vignette which can be found <a href="doc\prob.pdf"><strong>here</strong></a>. </p>
 
 <p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. </p>
-
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>
+  <!-- Start of StatCounter Code -->
+  <script type="text/javascript">
+var sc_project=3320783; 
+var sc_invisible=0; 
+var sc_partition=36; 
+var sc_security="2165b93f"; 
+  </script>
+  
+  <script type="text/javascript" src="http://www.statcounter.com/counter/counter_xhtml.js"></script>
+  <noscript>
+  </noscript>
+</p>
+<noscript><div class="statcounter"><a class="statcounter" href="http://www.statcounter.com/"><img class="statcounter" src="http://c37.statcounter.com/3320783/0/2165b93f/0/" alt="website metrics" /></a></div></noscript>
+<!-- End of StatCounter Code -->
 </body>
 </html>
