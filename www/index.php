@@ -16,7 +16,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
   <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title><The prob Package></title>
+	<title>The prob Package</title>
 	<link href="<?php echo $themeroot; ?>styles/estilo1.css" rel="stylesheet" type="text/css" />
     <style type="text/css">
 <!--
