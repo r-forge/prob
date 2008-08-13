@@ -48,7 +48,8 @@ G. Jay Kerns: <a href="mailto:gkerns@ysu.edu">gkerns@ysu.edu</a> (<a href="http:
         <p>&nbsp;</p>
       </blockquote>
 	  <p align="center">
-	  (C) R Foundation, from <a href="http://www.r-project.org">http://www.r-project.org</a>	  </p></td>
+	  R logo &copy; the R Foundation, <font face="Courier New"><a href="http://www.r-project.org" style="text-decoration: none"><span style="text-decoration: none">http://www.r-project.org</span></a></font>
+	  </p></td>
   </tr>
 </tbody></table>
 
