@@ -39,7 +39,7 @@
           <!-- end of project description -->
         </p>
         <p>Details and examples can be found in the package vignette, which is copied <a href="doc/prob.pdf">here</a>.</p>
-        <p>The CRAN description is <a href="http://www.cran.r-project.org/src/contrib/Descriptions/prob.html">here</a>.</p>
+        <p>The CRAN description is <a href="http://www.cran.r-project.org/web/packages/prob/index.html">here</a>.</p>
       </blockquote>
       <p class="articleTitle">Contact Information </p>
       <blockquote>
