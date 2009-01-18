@@ -22,9 +22,12 @@
 \alias{cweibull}
 \title{Characteristic functions}
 \description{
-  The characteristic function for probability distributions in R.  All base
-  distributions are supported, with the exception of a few noncentral
-  distributions.  For more resources see the References.
+  The characteristic function for selected probability distributions supported
+  by \R.  All base distributions are included, with the exception of a few noncentral
+  distributions.  For more resources see the References, and for complete
+  details and formulas see the vignette "charfunc", which can be accessed by
+  \code{vignette("charfunc")} at the command prompt.
+
 }
 \usage{
 cbeta(x, shape1, shape2, ncp = 0)
@@ -89,110 +92,149 @@ cweibull(x, shape, scale = 1)
   uniquely determines the distribution of its associated random variable.  For
   more details on characteristic functions and their properties, see Lukacs (1970).
   
-
-
-
-
-  If \code{rate} is not specified, it assumes the default value of
-  \code{1}.
-
-  The exponential distribution with rate \eqn{\lambda} has density
-  \deqn{
-    f(x) = \lambda {e}^{- \lambda x}}{
-    f(x) = lambda e^(- lambda x)}
-  for \eqn{x \ge 0}.
-  
-  The characteristic function is given by 
 }
+
+
 
 \section{Beta distribution}{
 For the probability density function, see \code{\link{dbeta}}.
 
+_{1}F_{1}(shape1; shape1 + shape2, it)
 
+F  is the confluent hypergeometric function, kummerM in the fAsianOptions package.
 
 }
+
+
 \section{Binomial distribution}{
 For the probability mass function, see \code{\link{dbinom}}.
 
+(pe^{it} + (1-p))^n
 
 }
+
+
 \section{Cauchy Distribution}{
 For the probability density function, see \code{\link{dcauchy}}.
 
+e^(i*t*theta - sigma*|t|)
 
 }
 \section{Chi-square Distribution}{
 For the probability density function, see \code{\link{dchisq}}.
+
+\frac{\exp(\frac{i\delta t}{1 - 2it})}{(1 - 2it)^{df/2}}
+
 
 
 }
 \section{Exponential Distribution}{
 For the probability density function, see \code{\link{dexp}}.
 
+Special case of gamma when alpha = 1
 
 }
 \section{F Distribution}{
 For the probability density function, see \code{\link{df}}.
 
 
+
+For the central F we use confluent hypergeometric function of the second kind,
+also known as kummerU, again from the fAsianOptions package,
+
+For noncentral F we use confluent hypergeometric function of the first kind.
+
 }
 \section{Gamma Distribution}{
 For the probability density function, see \code{\link{dgamma}}.
 
-
+(1 - beta*i*t)^(-alpha)
 
 }
 \section{Geometric Distribution}{
 For the probability mass function, see \code{\link{dgeom}}.
 
+Special case of negative binomial when r = 1.
 
 }
+
+
+
 \section{Hypergeometric Distribution}{
 For the probability mass function, see \code{\link{dhyper}}.
 
+\frac{ _{2}F_{1} }{
 
 }
+
+Gaussian hypergeometric series, see hypergeo in package hypergeo
+}
+
+
 \section{Logistic Distribution}{
 For the probability density function, see \code{\link{dlogis}}.
 
+\pi t \cosech \pi t  where
+
+\cosech (x) = 1/\sinh(x)
+
 
 }
+
+
 \section{Lognormal Distribution}{
 For the probability density function, see \code{\link{dlnorm}}.
 
+This characteristic function is uniquely complicated and delicate.  See the
+References.
 
 }
 \section{Negative Binomial Distribution}{
 For the probability mass function, see \code{\link{dnbinom}}.
 
+(p/(1-(1-p)*e^{it}))^r
 
 }
 \section{Normal Distribution}{
 For the probability density function, see \code{\link{dnorm}}.
 
+exp(i*mu*t + t^2 * sigma^2 /2)
 
 }
 \section{Poisson Distribution}{
 For the probability mass function, see \code{\link{dpois}}.
 
-
+e^(lambda*(e^it - 1))
 
 }
+
+
+
 \section{Student's t Distribution}{
 For the probability density function, see \code{\link{dt}}.
 
 
+Modified Bessel Function of the Second kind
+K_{\nu}(x) = \frac{\pi}{2}\frac{I_{-\nu}(x) - I_{-\nu}(x)}{\sin(\nu \pi)}
+
+where
+
+I_{\alpha}(x) = i^{-\alpha}J_{\alpha}(ix)
+
 
 }
+
+
 \section{Continuous Uniform Distribution}{
 For the probability density function, see \code{\link{dunif}}.
 
-
+\frac{e^(itb) - e^(ita)}{(b - a)it}
 
 }
 \section{Weibull Distribution}{
 For the probability density function, see \code{\link{dweibull}}.
 
+See the references.
 
 
 }
