@@ -1,0 +1,367 @@
+\batchmode
+\makeatletter
+\def\input@path{{/home/jay/Desktop/mobilesch/Research/ExchSim/charfuncs//}}
+\makeatother
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,letterpaper,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{esint}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\usepackage{Sweave}
+\newcommand{\Rcode}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rcommand}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+% Meta information - fill between {} and do not remove %
+% \VignetteIndexEntry{Characteristic Functions}
+% \VignetteDepends{prob}
+% \VignetteKeywords{characteristic, function}
+% \VignettePackage{prob}
+
+
+\usepackage{amssymb,latexsym}
+\usepackage[mathscr]{eucal}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{layout}
+\usepackage{color}
+\usepackage{multicol}
+
+\usepackage[%
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue, 
+    urlcolor=blue,%
+    pdfstartview=FitH,%
+    bookmarksopen=true, 
+    bookmarksopenlevel=3,
+    pdfpagelabels=true,
+    bookmarksnumbered,%
+    plainpages=false,pdfpagelabels,%    
+    pdftoolbar=false]{hyperref}
+
+
+
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\me}{\mathrm{e}}
+\renewcommand{\d}{\mathrm{d}}
+
+\usepackage{babel}
+
+\begin{document}
+
+\title{Characteristic Functions in the \Rpackage{prob} package}
+
+
+\author{G.~Jay Kerns}
+
+\maketitle
+\tableofcontents{}
+
+
+\section{Introduction}
+
+For the definitive reference concerning characteristic functions,
+see \cite{Lukacs} in the References. For the definitive reference
+concerning continuous and discrete univariate distributions, see\cite{JKBunivDisc,JKBvol1,JKBvol2}
+in the References. Some of the characteristic functions involve special
+mathematical functions; the classical reference for such creatures
+is \cite{AbramStegun}, but many of the definitions have made it to
+Wikipedia (\url{http://www.wikipedia.org/}) and selected links to
+the respective Wikipedia topics have been listed. 
+
+All of the below functions were written in straight \textsf{R} code;
+it would likely be possible to speed up evaluation if for example
+they were written in \textsf{C} or some other language. I would welcome
+any contributions by others to include such code in the \Rpackage{prob}
+package.
+
+The only base \textsf{R} distributions that do not have supported
+characteristic functions are the noncentral Beta and noncentral Student's
+$t$ distributions; as far as I can tell, these characteristic functions
+are not known in closed form. I would be interested in any reference
+to the contrary.
+
+
+\section{Characteristic functions}
+
+The characteristic function (c.f.) of a random variable $X$ is defined
+by\[
+\phi_{X}(t)=\E\me^{itX},\quad-\infty<t<\infty.\]
+When the distribution of $X$ is discrete with probability mass function
+$p_{X}(x)$, the c.f.~takes the form\[
+\phi_{X}(t)=\sum_{x\in S_{X}}\me^{itx}p_{X}(x),\]
+where $S_{X}$ is the support of $X$. When the distribution of $X$
+is continuous with probability density function $f_{X}(x)$, the c.f.~takes
+the form\[
+\phi_{X}(t)=\int_{S_{X}}\me^{itx}f_{X}(x)\,\d x.\]
+Characteristic functions have many, many useful properties: for example,
+every c.f.~ is uniformly continuous and bounded in modulus (by 1).
+Furthermore, a random variable has a distribution symmetric about
+0 if and only if its associated c.f.~is real-valued. See \cite{Lukacs}
+for everything you ever wanted to know about characteristic functions,
+and much, much more.
+
+The formulas for all characteristic functions supported in the \Rpackage{prob}
+package are listed below, in alphabetical order.
+
+
+\subsection{Beta distribution\label{sub:Beta-distribution}}
+
+Let $\alpha$ and $\beta$ denote the \texttt{shape1} and \texttt{shape2}
+parameters, respectively. The characteristic function is given by
+
+\[
+\phi_{X}(t)={}_{1}F_{1}(\alpha;\,\alpha+\beta;\, it),\]
+where $_{1}F_{1}$ is \emph{Kummer's confluent hypergeometric function},
+of the first kind, defined by \[
+_{1}F_{1}(a;b;z)=\sum_{n=0}^{\infty}\frac{(a)_{n}z^{n}}{(b)_{n}n!},\]
+with $(a)_{n}=a(a+1)(a+2)\cdots(a+n-1)$ the \emph{rising factorial}.
+We calculate $_{1}F_{1}$ using \texttt{kummerM} in the \Rpackage{fAsianOptions}
+package. Note that the c.f.~of the noncentral Beta distribution is
+not yet supported.
+
+
+\subsection{Binomial distribution}
+
+The characteristic function is given by
+
+\[
+\phi_{X}(t)=\left(p\me^{it}+(1-p)\right)^{n}.\]
+
+
+
+\subsection{Cauchy Distribution}
+
+The characteristic function is given by
+
+\[
+\phi_{X}(t)=\me^{it\theta-\sigma|t|},\]
+where $\theta$ and $\sigma$ are the \texttt{location} and \texttt{scale}
+parameters, respectively.
+
+
+\subsection{Chi-square Distribution}
+
+Let $p$ and $\delta$ denote the \texttt{df} and \texttt{ncp} parameters,
+resectively. Then the characteristic function is given by
+
+\[
+\phi_{X}(t)=\frac{\exp(\frac{i\delta t}{1-2it})}{(1-2it)^{p/2}}.\]
+
+
+
+\subsection{Exponential Distribution}
+
+This is the special case of the Gamma distribution when $\alpha=1$.
+
+
+\subsection{$F$ Distribution}
+
+Let $p$ and $q$ denote the \texttt{df1} and \texttt{df2} parameters,
+respectively, and let $\lambda$ denote the noncentrality parameter
+\texttt{ncp}. For the noncentral $F$ distribution ($\lambda\neq0$)
+the characteristic function is given by \[
+\phi_{X}(t)=\me^{-\lambda/2}\sum_{k=0}^{\infty}\frac{(\lambda/2)^{k}}{k!}{}_{1}F_{1}\left(\frac{p}{2}+k;\,-\frac{q}{2};\,-\frac{qit}{p}\right),\]
+where $_{1}F_{1}$ is Kummer's confluent hypergeometric function of
+the first kind; see Section \ref{sub:Beta-distribution}. For the
+purposes of calculation, we may only use a finite sum to approximate
+the infinite series, thus the user must specify an upper value of
+$k$ to be used, denoted \texttt{kmax}, which has the default value
+of \texttt{kmax} = 10. 
+
+For central $F$ (when $\lambda=0$) we use \emph{Kummer's confluent
+hypergeometric function of the second kind}, also known as Kummer's
+$U$, defined by
+
+\[
+\Psi(a,b;z)=\frac{\pi}{\sin\,\pi b}\left(\frac{_{1}F_{1}(a;b;z)}{\Gamma(1+a-b)\Gamma(b)}-z^{1-b}\frac{_{1}F_{1}(1+a-b;\,2-b;\, z)}{\Gamma(a)\Gamma(2-b)}\right).\]
+
+
+See \cite{confHyp} in the references. Kummer's $U$ is calculated
+with \texttt{kummerU}, again from the \Rpackage{fAsianOptions} package.
+The characteristic function for central $F$ is given by \[
+\phi_{X}(t)=\frac{\Gamma[(p+q)/2]}{\Gamma(q/2)}\Psi\left(\frac{p}{2},\,1-\frac{q}{2};\,-\frac{q}{p}it\right).\]
+
+
+
+\subsection{Gamma Distribution}
+
+Let $\alpha$ and $\beta$ denote the \texttt{shape} and \texttt{scale}
+parameters, respectively. The characteristic function is given by
+\[
+\phi_{X}(t)=\left(1-\beta it\right)^{-\alpha}.\]
+
+
+
+\subsection{Geometric Distribution}
+
+This is the special case of the Negative Binomial distribution when
+$r=1$.
+
+
+\subsection{Hypergeometric Distribution}
+
+The characteristic function is given by \[
+\phi_{X}(t)=\frac{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,\me^{it}\right)}{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,1\right)},\]
+
+
+where $_{2}F_{1}$ is the \emph{Gaussian hypergeometric series} defined
+by\[
+_{2}F_{1}(a,\, b;\, c;\, z)=\sum_{n=0}^{\infty}\frac{(a)_{n}(b)_{n}}{(c)_{n}}\,\frac{z^{n}}{n!},\]
+ where $(a)_{n}$ is the rising factorial defined as above in Section
+\ref{sub:Beta-distribution}. See \cite{GaussHyper} in the References
+for details concerning $_{2}F_{1}$. We calculate it by means of the
+\texttt{hypergeo} function in the \Rpackage{hypergeo} package.
+
+
+\subsection{Logistic Distribution}
+
+The characteristic function is given by \[
+\phi_{X}(t)=\me^{i\mu t}\frac{\pi\sigma t}{\sinh(\pi\sigma t)},\]
+where \[
+\sinh(x)=\frac{\me^{x}-e^{-x}}{2}=-i\sin\, ix,\]
+see \cite{hyperbolic} in the References.
+
+
+\subsection{Lognormal Distribution}
+
+This characteristic function is uniquely complicated and delicate.
+See \cite{lnormCF} in the References.
+
+
+\subsection{Negative Binomial Distribution}
+
+Let $r$ and $p$ denote the \texttt{size} and \texttt{prob} parameters,
+respectively. The characteristic function is given by \[
+\phi_{X}(t)=\left(\frac{p}{1-(1-p)\me^{it}}\right)^{r}.\]
+
+
+
+\subsection{Normal Distribution}
+
+Let $\mu$ and $\sigma$ denote the \texttt{mean} and \texttt{sd}
+parameters, respectively. The characteristic function is given by
+\[
+\phi_{X}(t)=\me^{i\mu t+\sigma^{2}t^{2}/2}.\]
+
+
+
+\subsection{Poisson Distribution}
+
+Let $\lambda$ denote the \texttt{lambda} parameter. The characteristic
+function is given by \[
+\phi_{X}(t)=\exp\left\{ \lambda(\me^{it}-1)\right\} .\]
+
+
+
+\subsection{Student's $t$ Distribution}
+
+Let $p$ denote the \texttt{df} parameter. The characteristic function
+is given by \[
+\phi_{X}(t)=\frac{K_{p/2}(\sqrt{p}|t|)\cdot(\sqrt{p}|t|)^{p/2}}{\Gamma(p/2)2^{p/2-1}},\]
+where $K_{\nu}$ is the \emph{modified Bessel Function of the second
+kind}, defined by\[
+K_{\nu}(x)=\frac{\pi}{2}\frac{I_{-\nu}(x)-I_{-\nu}(x)}{\sin(\nu\pi)},\]
+
+
+and $I_{\alpha}$ is the \emph{modified Bessel Function of the first
+kind}, defined by \[
+I_{\alpha}(x)=i^{-\alpha}J_{\alpha}(ix),\]
+
+
+with $J_{\alpha}(x)$ being a \emph{Bessel function of the first kind},
+defined by\[
+J_{\alpha}(x)=\sum_{m=0}^{\infty}\frac{(-1)^{m}}{m!\Gamma(m+\alpha+1)}\left(\frac{x}{2}\right)^{2m+\alpha}.\]
+
+
+Whew! See \cite{Bessel} in the References. Note that the c.f.~of
+the noncentral Student's $t$ distribution is not yet supported.
+
+
+\subsection{Continuous Uniform Distribution}
+
+Let $a$ and $b$ denote the \texttt{min} and \texttt{max} parameters,
+respectively. The characteristic function is given by \[
+\phi_{X}(t)=\frac{\me^{itb}-\me^{ita}}{(b-a)it}.\]
+
+
+
+\subsection{Weibull Distribution}
+
+Let $a$ and $b$ denote the \texttt{shape} and \texttt{scale} parameters,
+respectively. The characteristic function is given by \[
+\phi_{X}(t)=1+\sum_{k=0}^{\infty}\frac{(it)^{k+1}}{k!}\,\frac{a^{k+1}}{b}\Gamma\left(\frac{k+1}{b}\right).\]
+
+
+See \cite{Weibull} in the References. For the purposes of calculation,
+we may only use a finite sum to approximate the infinite series, thus
+the user must specify an upper value of $k$ to be used, denoted \texttt{kmax},
+which has the default value of \texttt{kmax} = 10. 
+
+
+\section{\textsf{R} Session information}
+
+\begin{Schunk}
+\begin{Sinput}
+> toLatex(sessionInfo())
+\end{Sinput}
+\begin{itemize}
+  \item R version 2.8.1 (2008-12-22), \verb|x86_64-pc-linux-gnu|
+  \item Locale: \verb|LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=C;LC_MESSAGES=en_US.UTF-8;LC_PAPER=en_US.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C|
+  \item Base packages: base, datasets, graphics, grDevices, methods,
+    stats, tcltk, utils
+  \item Other packages: svMisc~0.9-45, svSocket~0.9-42
+\end{itemize}\end{Schunk}
+\begin{thebibliography}{11}
+\appendix
+\bibitem{confHyp}\url{http://en.wikipedia.org/wiki/Confluent_hypergeometric_function}
+
+\bibitem{AbramStegun}Abramowitz, Milton; Stegun, Irene A., eds. (1965).
+Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical
+Tables, New York: Dover, ISBN 0-486-61272-4
+
+\bibitem{GaussHyper}\url{http://en.wikipedia.org/wiki/Hypergeometric_series}
+
+\bibitem{hyperbolic}\url{http://en.wikipedia.org/wiki/Hyperbolic_function}
+
+\bibitem{lnormCF}\url{http://anziamj.austms.org.au/V32/part3/Leipnik.html}
+
+\bibitem{Bessel}\url{http://en.wikipedia.org/wiki/Bessel_function}
+
+\bibitem{Weibull}Muraleedharan, G.~\emph{et al.} (2007). \textquotedbl{}Modified
+Weibull distribution for maximum and significant wave height simulation
+and prediction\textquotedbl{}. Coastal Engineering 54 (8): 630\textendash{}638.
+\url{http://dx.doi.org/10.1016%2Fj.coastaleng.2007.05.001}
+
+\bibitem{Lukacs}Lukacs, E. (1970). \emph{Characteristic Functions},
+Second Edition. London: Griffin.
+
+\bibitem{JKBunivDisc}Johnson, N. L., Kotz, S., and Kemp, A. W. (1992).
+\emph{Univariate Discrete Distributions}, Second Edition. New York:
+Wiley.
+
+\bibitem{JKBvol1}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995).
+\emph{Continuous Univariate Distributions}, volume 1. Wiley, New York.
+
+\bibitem{JKBvol2}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995).
+\emph{Continuous Univariate Distributions}, volume 2. Wiley, New York.
+\end{thebibliography}
+
+\end{document}

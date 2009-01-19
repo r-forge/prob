@@ -1,4 +1,3 @@
-
 #  Characteristic functions
 #  Released under GPL 2 or greater
 #  Copyright January 2009, G. Jay Kerns
@@ -58,7 +57,7 @@ chyper <- function(t, m, n, k){
 clogis <- function(t, location = 0, scale = 1){
     ifelse( identical(all.equal(t, 0), TRUE),
             return(1),
-            return(exp(1i*location)*pi*scale*t/sinh(pi*scale*t)))
+            return(exp(1i*location*t)*pi*scale*t/sinh(pi*scale*t)))
 }
 
 

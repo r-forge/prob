@@ -3,6 +3,7 @@
 % Distributed under GPL 2 or later
 
 \name{CharFunc}
+\concept{characteristic function}
 \alias{cbeta}
 \alias{cbinom}
 \alias{ccauchy}
@@ -22,12 +23,12 @@
 \alias{cweibull}
 \title{Characteristic functions}
 \description{
-  The characteristic function for selected probability distributions supported
+  The characteristic functions for selected probability distributions supported
   by \R.  All base distributions are included, with the exception of a few noncentral
-  variants.  For more resources see the References, and for complete
-  details and formulas see the vignette "charfunc", which can be accessed by
-  \code{vignette("charfunc")} at the command prompt.  Only the simplest
-  characteristic functions are listed below.
+  variants.  For more resources please see the References, and for complete
+  details and formulas see the \code{charfunc} vignette, which can be accessed by
+  \code{vignette("charfunc")} at the command prompt.  Only the simplest formulas
+  are listed below.
 
 }
 \usage{
