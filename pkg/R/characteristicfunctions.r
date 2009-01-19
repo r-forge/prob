@@ -27,12 +27,12 @@ cexp <- function(t, rate = 1){
     cgamma(t, shape = 1, scale = 1/rate)
 }
 
-cf <- function(t, df1, df2, ncp = 0, j = 10){
+cf <- function(t, df1, df2, ncp = 0, kmax = 10){
     require(fAsianOptions)
     if( identical(all.equal(ncp, 0), TRUE) ){
         gamma((df1+df2)/2) / gamma(df2/2) * kummerU(-1i*df2*t/df1, df1/2, 1 - df2/2)
     } else {
-        exp(-ncp/2)*sum((ncp/2)^(0:j)/factorial(0:j)*kummerM(-1i*df2*t/df1, df1/2 + 0:j, -df2/2))
+        exp(-ncp/2)*sum((ncp/2)^(0:kmax)/factorial(0:kmax)*kummerM(-1i*df2*t/df1, df1/2 + 0:kmax, -df2/2))
     }
 }
 
@@ -92,20 +92,20 @@ cunif <- function(t, min = 0, max = 1){
             (exp(1i*t*max) - exp(1i*t*min))/(1i*t*(max - min)))
 }
 
-cweibull <- function(t, shape, scale = 1, k = 20){
-    1 + sum((1i*t)^(0:k+1)/factorial(0:k) * scale^(0:k+1)/shape * gamma((0:k+1)/scale) )
+cweibull <- function(t, shape, scale = 1, kmax = 10){
+    1 + sum((1i*t)^(0:kmax+1)/factorial(0:kmax) * scale^(0:kmax+1)/shape * gamma((0:kmax+1)/scale) )
 }
 
 
 # hermite.h.polynomials {orthopolynom}
 
 
-clnorm <- function(t, meanlog = 0, sdlog = 1, m = 10){
+clnorm <- function(t, meanlog = 0, sdlog = 1, kmax = 10){
     require(orthopolynom)
-    He <- hermite.h.polynomials(m, normalized = TRUE)
-    ne <- nielsen(m)
+    He <- hermite.h.polynomials(kmax, normalized = TRUE)
+    ne <- nielsen(kmax)
     v <- c()
-    for (l in 1:(m+1)){
+    for (l in 1:(kmax+1)){
         v[l] <- (-1)^l*ne[l]*(2*sdlog^2)^(-l/2)*as.function(He[[l]])((log(t) + meanlog + 1i*pi/2)/(sdlog*sqrt(2)))
     }
     sqrt(pi/2/sdlog^2) * exp(-(log(t) + meanlog + 1i*pi/2)^2/(2*sdlog^2)) * sum(v)
