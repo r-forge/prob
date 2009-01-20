@@ -29,8 +29,8 @@
   details and formulas see the \code{charfunc} vignette, which can be accessed by
   \code{vignette("charfunc")} at the command prompt.  Only the simplest formulas
   are listed below.
-
 }
+
 \usage{
 cbeta(t, shape1, shape2)
 cbinom(t, size, prob)
@@ -52,27 +52,28 @@ cweibull(t, shape, scale = 1, kmax = 20)
 }
 
 \arguments{
-  \item{t}{numeric vector.}
+  \item{t}{numeric value.  Some of the above are vectorized functions.}
   \item{df}{degrees of freedom (\eqn{> 0}, maybe non-integer)}
-  \item{df1, df2}{numerator and denominator degrees of freedom}
+  \item{df1, df2}{numerator and denominator degrees of freedom, must be positive}
   \item{k}{the number of balls drawn from the urn.}
   \item{kmax}{the number of terms in the series.}
-  \item{lambda}{vector of (non-negative) means.}
-  \item{location, scale}{location and scale parameters.}
+  \item{lambda}{vector of (positive) means.}
+  \item{location, scale}{location and scale parameters; scale must be positive.}
   \item{m}{the number of white balls in the urn.}
   \item{meanlog, sdlog}{mean and standard deviation of the distribution
     on the log scale with default values of \code{0} and \code{1} respectively.}
   \item{mean}{vector of means.}
-  \item{min, max}{(unif) lower and upper limits of the distribution.  Must be finite.}
+  \item{min, max}{(unif) lower and upper limits of the distribution.
+    Must be finite and in the correct order.}
   \item{mu}{(nbinom) alternative parametrization via mean}
   \item{n}{the number of black balls in the urn.}
   \item{ncp}{non-centrality parameter \eqn{\delta}}  
   \item{prob}{probability of success in each trial.}
-  \item{rate}{an alternative way to specify the scale.}  
+  \item{rate}{an alternative way to specify the scale; must be positive.}  
   \item{sd}{vector of standard deviations.}
   \item{size}{number of trials (binom) or target for number of successful trials
-  (nbinom).}
-  \item{shape}{shape parameter (gamma, weibull)}
+    (nbinom).}
+  \item{shape}{shape parameter, must be positive (gamma, weibull)}
   \item{shape1, shape2}{positive parameters of the Beta distribution.}  
 }
 
@@ -93,181 +94,188 @@ cweibull(t, shape, scale = 1, kmax = 20)
 
 
 \section{Beta distribution}{
-    For the probability density function, see \code{\link{dbeta}}.
+  For the probability density function, see \code{\link{dbeta}}.
     
-    The characteristic function is given by
-    \deqn{ \phi(t) = _{1}F_{1}(\alpha; \alpha + \beta, it) }{
-     phi(t) = _{1}F_{1}(shape1; shape1 + shape2, it) 
-    }
-    where \eqn{F} is the confluent hypergeometric function calculated with
-    \code{\link[fAsianOptions]{kummerM}} in the \code{fAsianOptions} package.
+  The characteristic function is given by
+  \deqn{ \phi(t) = _{1}F_{1}(\alpha; \alpha + \beta, it) }{
+    phi(t) = _{1}F_{1}(shape1; shape1 + shape2, it) 
+  }
+  where \eqn{F} is the confluent hypergeometric function calculated with
+  \code{\link[fAsianOptions]{kummerM}} in the \code{fAsianOptions} package.
+  Note that the noncentral beta is not yet supported. 
 }
 
 
 \section{Binomial distribution}{
-    For the probability mass function, see \code{\link{dbinom}}.
+  For the probability mass function, see \code{\link{dbinom}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = [p e^{it} + (1-p)]^{n} }{
-     phi(t) = [pe^(it) + (1-p)]^n 
-    }
+  The characteristic function is given by
+  \deqn{ \phi(t) = [p e^{it} + (1-p)]^{n} }{
+    phi(t) = [pe^(it) + (1-p)]^n 
+  }
 }
 
 
 \section{Cauchy Distribution}{
-    For the probability density function, see \code{\link{dcauchy}}.
+  For the probability density function, see \code{\link{dcauchy}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = e^(it\theta - \sigma|t|) }{
-     phi(t) = e^(i*t*theta - sigma*|t|) 
-    }
+  The characteristic function is given by
+  \deqn{ \phi(t) = e^(it\theta - \sigma|t|) }{
+    phi(t) = e^(i*t*theta - sigma*|t|) 
+  }
 }
 
 
 \section{Chi-square Distribution}{
-    For the probability density function, see \code{\link{dchisq}}.
+  For the probability density function, see \code{\link{dchisq}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = \frac{\exp(\frac{i\delta t}{1 - 2it})}{(1 - 2it)^{df/2}} }{
-     phi(t) = \frac{\exp(\frac{i\delta t}{1 - 2it})}{(1 - 2it)^{df/2}} }
-
+  The characteristic function is given by
+  \deqn{ \phi(t) = \frac{\exp(\frac{i\delta t}{1 - 2it})}{(1 - 2it)^{df/2}} }{
+    phi(t) = \frac{\exp(\frac{i\delta t}{1 - 2it})}{(1 - 2it)^{df/2}} }
 }
 
 
 \section{Exponential Distribution}{
-    For the probability density function, see \code{\link{dexp}}.
+  For the probability density function, see \code{\link{dexp}}.
 
-    This is the special case of gamma when \eqn{\alpha = 1}.
+  This is the special case of gamma when \eqn{\alpha = 1}.
 }
 
 
 \section{F Distribution}{
-    For the probability density function, see \code{\link{df}}.
+  For the probability density function, see \code{\link{df}}.
 
-    For the central \eqn{F} we use confluent hypergeometric function of the second kind,
-    also known as \code{\link[fAsianOptions]{kummerU}}, from the
-    \code{fAsianOptions} package.
+  For the central \eqn{F} we use confluent hypergeometric function of the second kind,
+  also known as \code{\link[fAsianOptions]{kummerU}}, from the
+  \code{fAsianOptions} package.
 
-    For noncentral \eqn{F} we use confluent hypergeometric function of the
-    first kind.  See the vignette for details. 
+  For noncentral \eqn{F} we use confluent hypergeometric function of the
+  first kind.  See the vignette for details. 
 }
 
 
 \section{Gamma Distribution}{
-    For the probability density function, see \code{\link{dgamma}}.
+  For the probability density function, see \code{\link{dgamma}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = (1 - \beta it)^(-\alpha) }{
-     phi(t) = (1 - beta*i*t)^(-alpha) 
-    }
+  The characteristic function is given by
+  \deqn{ \phi(t) = (1 - \beta it)^(-\alpha) }{
+    phi(t) = (1 - beta*i*t)^(-alpha) 
+  }
 }
 
 
 \section{Geometric Distribution}{
-    For the probability mass function, see \code{\link{dgeom}}.
+  For the probability mass function, see \code{\link{dgeom}}.
 
-    This is the special case of negative binomial when \eqn{r = 1}.
+  This is the special case of negative binomial when \eqn{r = 1}.
 }
 
 
 \section{Hypergeometric Distribution}{
-    For the probability mass function, see \code{\link{dhyper}}.
+  For the probability mass function, see \code{\link{dhyper}}.
 
-    The formula for the characteristic function is based on the Gaussian
-    hypergeometric series, calculated with \code{\link[hypergeo]{hypergeo}} in
-    package \code{hypergeo}.  It is too complicated to be included here; please see
-    the vignette.
+  The formula for the characteristic function is based on the Gaussian
+  hypergeometric series, calculated with \code{\link[hypergeo]{hypergeo}} in
+  package \code{hypergeo}.  It is too complicated to be included here; please see
+  the vignette.
 }
 
 
 \section{Logistic Distribution}{
-    For the probability density function, see \code{\link{dlogis}}.
+  For the probability density function, see \code{\link{dlogis}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = \pi t / \sinh(\pi t) }{
-     phi(t) = \pi t \cosech \pi t 
-    }
+  The characteristic function is given by
+  \deqn{ \phi(t) = \pi t / \sinh(\pi t) }{
+    phi(t) = \pi t \cosech \pi t 
+  }
 }
 
 
 \section{Lognormal Distribution}{
-    For the probability density function, see \code{\link{dlnorm}}.
+  For the probability density function, see \code{\link{dlnorm}}.
 
-    This characteristic function is uniquely complicated and delicate.  See the
-    vignette and the References.
+  This characteristic function is uniquely complicated and delicate, but
+  there is a recent numerical algorithm for computation due to Beaulieu
+  (2008).  See the vignette and the References.
 }
 
 
 \section{Negative Binomial Distribution}{
-    For the probability mass function, see \code{\link{dnbinom}}.
+  For the probability mass function, see \code{\link{dnbinom}}.
 
-    The characteristic function is given by
-    \deqn{ \phi(t) = (p/(1-(1-p)*e^{it}))^{r} }{
-     phi(t) = [p/(1-(1-p)*e^(it))]^r 
-    }
+  The characteristic function is given by
+  \deqn{ \phi(t) = (p/(1-(1-p)*e^{it}))^{r} }{
+    phi(t) = [p/(1-(1-p)*e^(it))]^r 
+  }
 }
 
 
 \section{Normal Distribution}{
-    For the probability density function, see \code{\link{dnorm}}.
+  For the probability density function, see \code{\link{dnorm}}.
 
-    The characteristic function is
-    \deqn{ \phi (t) = e^{i\mu t + t^{2} \sigma^{2} /2} }{
-        phi(t) = e^(i*mu*t + t^2 * sigma^2 /2) }
+  The characteristic function is
+  \deqn{ \phi (t) = e^{i\mu t + t^{2} \sigma^{2} /2} }{
+    phi(t) = e^(i*mu*t + t^2 * sigma^2 /2) }
 }
 
 
 \section{Poisson Distribution}{
-    For the probability mass function, see \code{\link{dpois}}.
+  For the probability mass function, see \code{\link{dpois}}.
 
-    The characteristic function is
-    \deqn{
-        \phi (t) = e^{\lambda (e^{it} - 1)}
-    }{
-        phi(t) = e^(lambda*(e^it - 1))
-    }
+  The characteristic function is
+  \deqn{
+    \phi (t) = e^{\lambda (e^{it} - 1)}
+  }{
+    phi(t) = e^(lambda*(e^it - 1))
+  }
 }
 
 
 \section{Student's t Distribution}{
-    For the probability density function, see \code{\link{dt}}.
+  For the probability density function, see \code{\link{dt}}.
 
-    See the vignette for a formula for the characteristic function.
+  See the vignette for a formula for the characteristic function. Note that the
+  noncentral distribution is not yet supported.
 }
 
 
 \section{Continuous Uniform Distribution}{
-For the probability density function, see \code{\link{dunif}}.
+  For the probability density function, see \code{\link{dunif}}.
 
-    The characteristic function is
-    \deqn{
-        \phi (t) = \frac{e^{itb} - e^{ita}}{(b - a)it}
-    }{
-        phi(t) = \frac{e^(itb) - e^(ita)}{(b - a)it}
-    }
+  The characteristic function is
+  \deqn{
+    \phi (t) = \frac{e^{itb} - e^{ita}}{(b - a)it}
+  }{
+    phi(t) = \frac{e^(itb) - e^(ita)}{(b - a)it}
+  }
 }
 
 
 \section{Weibull Distribution}{
-    For the probability density function, see \code{\link{dweibull}}.
+  For the probability density function, see \code{\link{dweibull}}.
 
-    The formula for the characteristic function is too complicated to be listed
-    here;  please see the vignette and the References.
+  The formula for the characteristic function is too complicated to be listed
+  here;  please see the vignette and the References.
 }
 
 \source{
   For \code{clnorm} a fast numerical algorithm is used that originated with and was
   published and communicated to me by N. C. Beaulieu: see
 
-  Beaulieu, N.C. (2008). \emph{Fast convenient numerical computation of
-  lognormal characteristic functions}, IEEE Transactions on Communications,
-  Volume 56,  Issue 3, 331--333.
 }
 
 \references{
-  Lukacs, E. (1970)
-  \emph{Characteristic Functions},
-  Second Edition. London: Griffin.
+  Abramowitz, M. and Stegun, I. A. (1972)
+  \emph{Handbook of Mathematical Functions.} New York: Dover.  
+
+  Beaulieu, N.C. (2008) Fast convenient numerical computation of
+  lognormal characteristic functions, IEEE Transactions on Communications,
+  Volume \bold{56},  Issue 3, 331--333.
+  
+  Hurst, S. (1995) The Characteristic Function of the Student-t
+  Distribution, Financial Mathematics Research Report No. FMRR006-95,
+  Statistics Research Report No. SRR044-95, available online:
+  \url{http://wwwmaths.anu.edu.au/research.reports/srr/95/044/}
 
   Johnson, N. L., Kotz, S., and Kemp, A. W. (1992)
   \emph{Univariate Discrete Distributions},
@@ -275,21 +283,22 @@ For the probability density function, see \code{\link{dunif}}.
 
   Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995)
   \emph{Continuous Univariate Distributions}, volume 1.
-  Wiley, New York.
+  New York: Wiley.
   
   Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995)
   \emph{Continuous Univariate Distributions}, volume 2. 
-  Wiley, New York.
+  New York: Wiley.
+  
+  Lukacs, E. (1970)
+  \emph{Characteristic Functions},
+  Second Edition. London: Griffin.
 
-  Abramowitz, M. and Stegun, I. A. (1972)
-  \emph{Handbook of Mathematical Functions.} New York: Dover.
 }
-
-
 
 \author{G. Jay Kerns \email{gkerns@ysu.edu}.}
 
 \seealso{
+  \code{\link{besselK}}
   \code{\link[fAsianOptions]{kummerM}} 
   \code{\link[fAsianOptions]{kummerU}}
   \code{\link[hypergeo]{hypergeo}} 

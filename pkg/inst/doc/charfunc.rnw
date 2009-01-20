@@ -1,6 +1,6 @@
 \batchmode
 \makeatletter
-\def\input@path{{/home/jay/Desktop/mobilew/Research/ExchSim/charfuncs//}}
+\def\input@path{{/home/jay/Desktop/mobilesch/Research/ExchSim/charfuncs//}}
 \makeatother
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
@@ -96,8 +96,8 @@ package.
 The only base \textsf{R} distributions that do not have supported
 characteristic functions are the noncentral Beta and noncentral Student's
 $t$ distributions; as far as I can tell, these characteristic functions
-are not known in closed form. I would be interested in any reference
-to the contrary.
+are not known in closed form. I would be interested in and appreciative
+of any reference to the contrary.
 
 
 \section{Characteristic functions}
@@ -145,6 +145,8 @@ not yet supported.
 \begin{Soutput}
 function (t, shape1, shape2) 
 {
+    if (shape1 <= 0 || shape2 <= 0) 
+        stop("shape1, shape2 must be positive")
     fAsianOptions:::kummerM((0+1i) * t, shape1, shape1 + shape2)
 }
 <environment: namespace:prob>
@@ -167,6 +169,10 @@ The characteristic function is given by
 \begin{Soutput}
 function (t, size, prob) 
 {
+    if (size <= 0) 
+        stop("size must be positive")
+    if (prob < 0 || prob > 1) 
+        stop("prob must be in [0,1]")
     (prob * exp((0+1i) * t) + (1 - prob))^size
 }
 <environment: namespace:prob>
@@ -190,6 +196,8 @@ parameters, respectively.
 \begin{Soutput}
 function (t, location = 0, scale = 1) 
 {
+    if (scale <= 0) 
+        stop("scale must be positive")
     exp((0+1i) * location * t) * exp(-scale * abs(t))
 }
 <environment: namespace:prob>
@@ -213,6 +221,8 @@ resectively. Then the characteristic function is given by
 \begin{Soutput}
 function (t, df, ncp = 0) 
 {
+    if (df < 0 || ncp < 0) 
+        stop("df and ncp must be nonnegative")
     exp((0+1i) * ncp * t/(1 - (0+2i) * t))/(1 - (0+2i) * t)^(df/2)
 }
 <environment: namespace:prob>
@@ -274,6 +284,8 @@ The characteristic function for central $F$ is given by \[
 \begin{Soutput}
 function (t, df1, df2, ncp = 0, kmax = 10) 
 {
+    if (df1 <= 0 || df2 <= 0) 
+        stop("df1 and df2 must be positive")
     if (identical(all.equal(ncp, 0), TRUE)) {
         gamma((df1 + df2)/2)/gamma(df2/2) * fAsianOptions:::kummerU(-(0+1i) * 
             df2 * t/df1, df1/2, 1 - df2/2)
@@ -304,6 +316,8 @@ parameters, respectively. The characteristic function is given by
 \begin{Soutput}
 function (t, shape, rate = 1, scale = 1/rate) 
 {
+    if (rate <= 0 || scale <= 0) 
+        stop("rate must be positive")
     (1 - scale * (0+1i) * t)^(-shape)
 }
 <environment: namespace:prob>
@@ -339,10 +353,10 @@ The characteristic function is given by \[
 where $_{2}F_{1}$ is the \emph{Gaussian hypergeometric series} defined
 by\[
 _{2}F_{1}(a,\, b;\, c;\, z)=\sum_{n=0}^{\infty}\frac{(a)_{n}(b)_{n}}{(c)_{n}}\,\frac{z^{n}}{n!},\]
- where $(a)_{n}$ is the rising factorial defined as above in Section
-\ref{sub:Beta-distribution}. See \cite{GaussHyper} in the References
-for details concerning $_{2}F_{1}$. We calculate it by means of the
-\texttt{hypergeo} function in the \Rpackage{hypergeo} package.
+with $(a)_{n}$ the rising factorial defined as above in Section \ref{sub:Beta-distribution}.
+See \cite{GaussHyper} in the References for details concerning $_{2}F_{1}$.
+We calculate it by means of the \texttt{hypergeo} function in the
+\Rpackage{hypergeo} package.
 
 
 \paragraph*{Source Code:}
@@ -351,6 +365,8 @@ for details concerning $_{2}F_{1}$. We calculate it by means of the
 \begin{Soutput}
 function (t, m, n, k) 
 {
+    if (m < 0 || n < 0 || k < 0) 
+        stop("m, n, k must be positive")
     hypergeo:::hypergeo(-k, -m, n - k + 1, exp((0+1i) * t))/hypergeo:::hypergeo(-k, 
         -m, n - k + 1, 1)
 }
@@ -374,6 +390,8 @@ see \cite{hyperbolic} in the References.
 \begin{Soutput}
 function (t, location = 0, scale = 1) 
 {
+    if (scale <= 0) 
+        stop("scale must be positive")
     ifelse(identical(all.equal(t, 0), TRUE), return(1), return(exp((0+1i) * 
         location) * pi * scale * t/sinh(pi * scale * t)))
 }
@@ -385,25 +403,34 @@ function (t, location = 0, scale = 1)
 \subsection{Lognormal Distribution}
 
 This characteristic function is uniquely complicated and delicate.
-See \cite{lnormCF} in the References.
+See \cite{lnormCF} in the References. For fast numerical computation
+an algorithm due to Beaulieu is used, see \cite{clnorm}. 
 
 
 \paragraph*{Source Code:}
 
 \begin{Schunk}
 \begin{Soutput}
-function (t, meanlog = 0, sdlog = 1, kmax = 10) 
+function (t, meanlog = 0, sdlog = 1) 
 {
-    He <- orthopolynom:::hermite.h.polynomials(kmax, normalized = TRUE)
-    ne <- nielsen(kmax)
-    v <- c()
-    for (l in 1:(kmax + 1)) {
-        v[l] <- (-1)^(l - 1) * ne[l] * (2 * sdlog^2)^(-(l - 1)/2) * 
-            as.function(He[[l]])((log(t) + meanlog + (0+1i) * 
-                pi/2)/(sdlog * sqrt(2)))
+    if (sdlog <= 0) 
+        stop("sdlog must be positive")
+    if (identical(all.equal(t, 0), TRUE)) {
+        return(1 + (0+0i))
     }
-    sqrt(pi/2/sdlog^2) * exp(-(log(t) + meanlog + (0+1i) * pi/2)^2/(2 * 
-        sdlog^2)) * sum(v)
+    else {
+        t <- t * exp(meanlog)
+        Rp1 <- integrate(function(y) exp(-log(y/t)^2/2/sdlog^2) * 
+            cos(y)/y, lower = 0, upper = t)$value
+        Rp2 <- integrate(function(y) exp(-log(y * t)^2/2/sdlog^2) * 
+            cos(1/y)/y, lower = 0, upper = 1/t)$value
+        Ip1 <- integrate(function(y) exp(-log(y/t)^2/2/sdlog^2) * 
+            sin(y)/y, lower = 0, upper = t)$value
+        Ip2 <- integrate(function(y) exp(-log(y * t)^2/2/sdlog^2) * 
+            sin(1/y)/y, lower = 0, upper = 1/t)$value
+        return((Rp1 + Rp2 + (0+1i) * (Ip1 + Ip2))/(sqrt(2 * pi) * 
+            sdlog))
+    }
 }
 <environment: namespace:prob>
 \end{Soutput}
@@ -424,6 +451,10 @@ respectively. The characteristic function is given by \[
 \begin{Soutput}
 function (t, size, prob, mu) 
 {
+    if (size <= 0) 
+        stop("size must be positive")
+    if (prob <= 0 || prob > 1) 
+        stop("prob must be in (0,1]")
     if (!missing(mu)) {
         if (!missing(prob)) 
             stop("'prob' and 'mu' both specified")
@@ -451,6 +482,8 @@ parameters, respectively. The characteristic function is given by
 \begin{Soutput}
 function (t, mean = 0, sd = 1) 
 {
+    if (sd <= 0) 
+        stop("sd must be positive")
     exp((0+1i) * mean - (sd * t)^2/2)
 }
 <environment: namespace:prob>
@@ -472,6 +505,8 @@ function is given by \[
 \begin{Soutput}
 function (t, lambda) 
 {
+    if (lambda <= 0) 
+        stop("lambda must be positive")
     exp(lambda * (exp((0+1i) * t) - 1))
 }
 <environment: namespace:prob>
@@ -481,7 +516,8 @@ function (t, lambda)
 
 \subsection{Student's $t$ Distribution}
 
-Let $p$ denote the \texttt{df} parameter. The characteristic function
+This formula used was published by Hurst, see \cite{studentst}. Let
+$p$ denote the \texttt{df} parameter. The characteristic function
 is given by \[
 \phi_{X}(t)=\frac{K_{p/2}(\sqrt{p}|t|)\cdot(\sqrt{p}|t|)^{p/2}}{\Gamma(p/2)2^{p/2-1}},\]
 where $K_{\nu}$ is the \emph{modified Bessel Function of the second
@@ -509,6 +545,8 @@ the noncentral Student's $t$ distribution is not yet supported.
 \begin{Soutput}
 function (t, df) 
 {
+    if (df <= 0) 
+        stop("df be positive")
     besselK(sqrt(df) * abs(t), df/2) * (sqrt(df) * abs(t))^(df/2)/(gamma(df/2) * 
         2^(df/2 - 1))
 }
@@ -531,6 +569,8 @@ respectively. The characteristic function is given by \[
 \begin{Soutput}
 function (t, min = 0, max = 1) 
 {
+    if (max < min) 
+        stop("min cannot be greater than max")
     ifelse(identical(all.equal(t, 0), TRUE), 1, (exp((0+1i) * 
         t * max) - exp((0+1i) * t * min))/((0+1i) * t * (max - 
         min)))
@@ -559,6 +599,8 @@ which has the default value of \texttt{kmax} = 20.
 \begin{Soutput}
 function (t, shape, scale = 1, kmax = 20) 
 {
+    if (shape <= 0 || scale <= 0) 
+        stop("shape and scale must be positive")
     1 + sum(((0+1i) * t)^(0:kmax + 1)/factorial(0:kmax) * scale^(0:kmax + 
         1)/shape * gamma((0:kmax + 1)/scale))
 }
@@ -574,7 +616,7 @@ function (t, shape, scale = 1, kmax = 20)
 > toLatex(sessionInfo())
 \end{Sinput}
 \begin{itemize}
-  \item R version 2.8.0 (2008-10-20), \verb|i486-pc-linux-gnu|
+  \item R version 2.8.1 (2008-12-22), \verb|x86_64-pc-linux-gnu|
   \item Locale: \verb|LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=C;LC_MESSAGES=en_US.UTF-8;LC_PAPER=en_US.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C|
   \item Base packages: base, datasets, graphics, grDevices, methods,
     stats, tcltk, utils
@@ -582,7 +624,7 @@ function (t, shape, scale = 1, kmax = 20)
 \end{itemize}\end{Schunk}
 
 
-\begin{thebibliography}{11}
+\begin{thebibliography}{13}
 \appendix
 \bibitem{confHyp}\url{http://en.wikipedia.org/wiki/Confluent_hypergeometric_function}
 
@@ -615,6 +657,15 @@ Wiley.
 
 \bibitem{JKBvol2}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995).
 \emph{Continuous Univariate Distributions}, volume 2. Wiley, New York.
+
+\bibitem{clnorm}Beaulieu, N.C. (2008). \emph{Fast convenient numerical
+computation of lognormal characteristic functions}, IEEE Transactions
+on Communications, Volume 56, Issue 3, 331--333.
+
+\bibitem{studentst}Hurst, S. (1995). \emph{The Characteristic Function
+of the Student-t Distribution}, Financial Mathematics Research Report
+No. FMRR006-95, Statistics Research Report No. SRR044-95, available
+online: \url{http://wwwmaths.anu.edu.au/research.reports/srr/95/044/}
 \end{thebibliography}
 
 \end{document}
