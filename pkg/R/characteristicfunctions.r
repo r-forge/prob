@@ -52,6 +52,20 @@ chyper <- function(t, m, n, k){
 
 
 
+clnorm <- function(t, meanlog = 0, sdlog = 1){
+    if (identical(all.equal(t, 0), TRUE)){
+        return(1+0i)
+    } else {
+        t <- t * exp(meanlog)
+        Rp1 <- integrate(function(y) exp(-log(y/t)^2/2/sdlog^2) * cos(y)/y, lower = 0, upper = t )$value
+        Rp2 <- integrate(function(y) exp(-log(y*t)^2/2/sdlog^2) * cos(1/y)/y, lower = 0, upper = 1/t )$value
+        Ip1 <- integrate(function(y) exp(-log(y/t)^2/2/sdlog^2) * sin(y)/y, lower = 0, upper = t )$value
+        Ip2 <- integrate(function(y) exp(-log(y*t)^2/2/sdlog^2) * sin(1/y)/y, lower = 0, upper = 1/t )$value
+        return((Rp1 + Rp2 + 1i*(Ip1 + Ip2))/(sqrt(2*pi) * sdlog))
+    }
+}
+
+
 clogis <- function(t, location = 0, scale = 1){
     ifelse( identical(all.equal(t, 0), TRUE),
             return(1),
@@ -94,25 +108,30 @@ cweibull <- function(t, shape, scale = 1, kmax = 20){
 }
 
 
-# hermite.h.polynomials {orthopolynom}
 
+clnorm <- function(t, meanlog = 0, sdlog = 1){
+    ifelse( identical(all.equal(t, 0), TRUE),
+            1,
+        fr1 <- function(y){
+            exp(-log(y/(t*exp(meanlog)))^2/2/sdlog^2) * cos(y)/(sqrt(2*pi) * sdlog * y)
+        }
+        fr2 <- function(y){
+            exp( -log(y*t*exp(meanlog))^2/2/sdlog^2  ) * cos(1/y)/(sqrt(2*pi) * sdlog * y)
+        }
+        fi1 <- function(y){
+            exp(-log(y/(t*exp(meanlog)))^2/2/sdlog^2) * sin(y)/(sqrt(2*pi) * sdlog * y)
+        }
+        fi2 <- function(y){
+            exp(-log(y*(t*exp(meanlog)))^2/2/sdlog^2) * sin(1/y)/(sqrt(2*pi) * sdlog * y)
+        }
+        Rp <- integrate(fr1, lower = 0, upper = t*exp(meanlog) )$value + integrate(fr2, lower = 0, upper = 1/(t*exp(meanlog)) )$value
+        Ip <- integrate(fi1, lower = 0, upper = t*exp(meanlog) )$value + integrate(fi2, lower = 0, upper = 1/(t*exp(meanlog)) )$value
+        
+        return(Rp + 1i*Ip)
+    )
 
-clnorm <- function(t, meanlog = 0, sdlog = 1, kmax = 10){
-    He <- orthopolynom:::hermite.h.polynomials(kmax, normalized = TRUE)
-    ne <- nielsen(kmax)
-    v <- c()
-    for (l in 1:(kmax+1)){
-        v[l] <- (-1)^(l-1)*ne[l]*(2*sdlog^2)^(-(l-1)/2)*as.function(He[[l]])((log(t) + meanlog + 1i*pi/2)/(sdlog*sqrt(2)))
-    }
-    sqrt(pi/2/sdlog^2) * exp(-(log(t) + meanlog + 1i*pi/2)^2/(2*sdlog^2)) * sum(v)
 }
 
 
-nielsen <- function(m){
-    eulerg <- 0.5772142369446214
-    a <- c(1, eulerg)
-    for (n in 3:(m+1)){    
-        a[n] <- (eulerg*a[n-1] + sum((-1)^(1:(n-2)) * VGAM:::zeta(2:(n-1)) * rev(a[1:(n-2)]) ) )/(n-1)
-    }
-    return(a)
-}
+
+

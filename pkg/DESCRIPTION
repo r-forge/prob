@@ -5,7 +5,7 @@ Title: Elementary Probability on Finite Sample Spaces
 Author: G. Jay Kerns <gkerns@ysu.edu> 
 Maintainer: G. Jay Kerns <gkerns@ysu.edu>
 Depends:
-Suggests: combinat, fAsianOptions, hypergeo, polynom, orthopolynom, VGAM
+Suggests: combinat, fAsianOptions, hypergeo, VGAM
 LazyLoad: no
 Description:
  This package provides a framework for performing elementary probability

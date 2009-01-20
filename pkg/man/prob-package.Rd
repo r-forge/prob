@@ -24,7 +24,7 @@ Package: \tab prob\cr
 Version: \tab 0.9-2\cr
 Date: \tab 2009-01-18\cr
 Depends: \tab R (>= 2.1.0)\cr
-Suggests: \tab combinat, fAsianOptions, hypergeo, polynom, orthopolynom, VGAM\cr
+Suggests: \tab combinat, fAsianOptions, hypergeo, VGAM\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab http://prob.r-forge.r-project.org,
