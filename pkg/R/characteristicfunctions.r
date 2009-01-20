@@ -107,31 +107,3 @@ cweibull <- function(t, shape, scale = 1, kmax = 20){
     1 + sum((1i*t)^(0:kmax+1)/factorial(0:kmax) * scale^(0:kmax+1)/shape * gamma((0:kmax+1)/scale) )
 }
 
-
-
-clnorm <- function(t, meanlog = 0, sdlog = 1){
-    ifelse( identical(all.equal(t, 0), TRUE),
-            1,
-        fr1 <- function(y){
-            exp(-log(y/(t*exp(meanlog)))^2/2/sdlog^2) * cos(y)/(sqrt(2*pi) * sdlog * y)
-        }
-        fr2 <- function(y){
-            exp( -log(y*t*exp(meanlog))^2/2/sdlog^2  ) * cos(1/y)/(sqrt(2*pi) * sdlog * y)
-        }
-        fi1 <- function(y){
-            exp(-log(y/(t*exp(meanlog)))^2/2/sdlog^2) * sin(y)/(sqrt(2*pi) * sdlog * y)
-        }
-        fi2 <- function(y){
-            exp(-log(y*(t*exp(meanlog)))^2/2/sdlog^2) * sin(1/y)/(sqrt(2*pi) * sdlog * y)
-        }
-        Rp <- integrate(fr1, lower = 0, upper = t*exp(meanlog) )$value + integrate(fr2, lower = 0, upper = 1/(t*exp(meanlog)) )$value
-        Ip <- integrate(fi1, lower = 0, upper = t*exp(meanlog) )$value + integrate(fi2, lower = 0, upper = 1/(t*exp(meanlog)) )$value
-        
-        return(Rp + 1i*Ip)
-    )
-
-}
-
-
-
-

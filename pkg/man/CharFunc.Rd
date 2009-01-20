@@ -255,6 +255,14 @@ For the probability density function, see \code{\link{dunif}}.
     here;  please see the vignette and the References.
 }
 
+\source{
+  For \code{clnorm} a fast numerical algorithm is used that originated with and was
+  published and communicated to me by N. C. Beaulieu: see
+
+  Beaulieu, N.C. (2008). \emph{Fast convenient numerical computation of
+  lognormal characteristic functions}, IEEE Transactions on Communications,
+  Volume 56,  Issue 3, 331--333.
+}
 
 \references{
   Lukacs, E. (1970)
@@ -276,6 +284,10 @@ For the probability density function, see \code{\link{dunif}}.
   Abramowitz, M. and Stegun, I. A. (1972)
   \emph{Handbook of Mathematical Functions.} New York: Dover.
 }
+
+
+
+\author{G. Jay Kerns \email{gkerns@ysu.edu}.}
 
 \seealso{
   \code{\link[fAsianOptions]{kummerM}} 
