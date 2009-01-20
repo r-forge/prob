@@ -37,7 +37,7 @@ cbinom(t, size, prob)
 ccauchy(t, location = 0, scale = 1)
 cchisq(t, df, ncp = 0)
 cexp(t, rate = 1)
-cf(t, df1, df2, ncp, kmax = 10)
+cf(t, df1, df2, ncp = 0, kmax = 10)
 cgamma(t, shape, rate = 1, scale = 1/rate)
 cgeom(t, prob)
 chyper(t, m, n, k)
@@ -48,7 +48,7 @@ cnorm(t, mean = 0, sd = 1)
 cpois(t, lambda)
 ct(t, df)
 cunif(t, min=0, max=1)
-cweibull(t, shape, scale = 1, kmax = 10)
+cweibull(t, shape, scale = 1, kmax = 20)
 }
 
 \arguments{

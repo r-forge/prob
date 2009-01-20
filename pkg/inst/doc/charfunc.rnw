@@ -1,6 +1,6 @@
 \batchmode
 \makeatletter
-\def\input@path{{/home/jay/Desktop/mobilesch/Research/ExchSim/charfuncs//}}
+\def\input@path{{/home/jay/Desktop/mobilew/Research/ExchSim/charfuncs//}}
 \makeatother
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
@@ -75,11 +75,12 @@
 \tableofcontents{}
 
 
+
 \section{Introduction}
 
 For the definitive reference concerning characteristic functions,
 see \cite{Lukacs} in the References. For the definitive reference
-concerning continuous and discrete univariate distributions, see\cite{JKBunivDisc,JKBvol1,JKBvol2}
+concerning continuous and discrete univariate distributions, see \cite{JKBunivDisc,JKBvol1,JKBvol2}
 in the References. Some of the characteristic functions involve special
 mathematical functions; the classical reference for such creatures
 is \cite{AbramStegun}, but many of the definitions have made it to
@@ -138,13 +139,39 @@ package. Note that the c.f.~of the noncentral Beta distribution is
 not yet supported.
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, shape1, shape2) 
+{
+    fAsianOptions:::kummerM((0+1i) * t, shape1, shape1 + shape2)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Binomial distribution}
 
 The characteristic function is given by
 
 \[
-\phi_{X}(t)=\left(p\me^{it}+(1-p)\right)^{n}.\]
+\phi_{X}(t)=\left[p\me^{it}+(1-p)\right]^{n}.\]
 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, size, prob) 
+{
+    (prob * exp((0+1i) * t) + (1 - prob))^size
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Cauchy Distribution}
@@ -157,19 +184,59 @@ where $\theta$ and $\sigma$ are the \texttt{location} and \texttt{scale}
 parameters, respectively.
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, location = 0, scale = 1) 
+{
+    exp((0+1i) * location * t) * exp(-scale * abs(t))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Chi-square Distribution}
 
 Let $p$ and $\delta$ denote the \texttt{df} and \texttt{ncp} parameters,
 resectively. Then the characteristic function is given by
 
 \[
-\phi_{X}(t)=\frac{\exp(\frac{i\delta t}{1-2it})}{(1-2it)^{p/2}}.\]
+\phi_{X}(t)=\frac{\exp\left\{ \frac{i\delta t}{1-2it}\right\} }{(1-2it)^{p/2}}.\]
 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, df, ncp = 0) 
+{
+    exp((0+1i) * ncp * t/(1 - (0+2i) * t))/(1 - (0+2i) * t)^(df/2)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Exponential Distribution}
 
 This is the special case of the Gamma distribution when $\alpha=1$.
+See Section \ref{sub:Gamma-Distribution}.
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, rate = 1) 
+{
+    cgamma(t, shape = 1, scale = 1/rate)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{$F$ Distribution}
@@ -201,7 +268,28 @@ The characteristic function for central $F$ is given by \[
 
 
 
-\subsection{Gamma Distribution}
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, df1, df2, ncp = 0, kmax = 10) 
+{
+    if (identical(all.equal(ncp, 0), TRUE)) {
+        gamma((df1 + df2)/2)/gamma(df2/2) * fAsianOptions:::kummerU(-(0+1i) * 
+            df2 * t/df1, df1/2, 1 - df2/2)
+    }
+    else {
+        exp(-ncp/2) * sum((ncp/2)^(0:kmax)/factorial(0:kmax) * 
+            fAsianOptions:::kummerM(-(0+1i) * df2 * t/df1, df1/2 + 
+                0:kmax, -df2/2))
+    }
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Gamma Distribution\label{sub:Gamma-Distribution}}
 
 Let $\alpha$ and $\beta$ denote the \texttt{shape} and \texttt{scale}
 parameters, respectively. The characteristic function is given by
@@ -210,10 +298,36 @@ parameters, respectively. The characteristic function is given by
 
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, shape, rate = 1, scale = 1/rate) 
+{
+    (1 - scale * (0+1i) * t)^(-shape)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Geometric Distribution}
 
 This is the special case of the Negative Binomial distribution when
-$r=1$.
+$r=1$; see Section \ref{sub:Negative-Binomial-Distribution}.
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, prob) 
+{
+    cnbinom(t, size = 1, prob = prob)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Hypergeometric Distribution}
@@ -231,6 +345,20 @@ for details concerning $_{2}F_{1}$. We calculate it by means of the
 \texttt{hypergeo} function in the \Rpackage{hypergeo} package.
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, m, n, k) 
+{
+    hypergeo:::hypergeo(-k, -m, n - k + 1, exp((0+1i) * t))/hypergeo:::hypergeo(-k, 
+        -m, n - k + 1, 1)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Logistic Distribution}
 
 The characteristic function is given by \[
@@ -240,18 +368,72 @@ where \[
 see \cite{hyperbolic} in the References.
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, location = 0, scale = 1) 
+{
+    ifelse(identical(all.equal(t, 0), TRUE), return(1), return(exp((0+1i) * 
+        location) * pi * scale * t/sinh(pi * scale * t)))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Lognormal Distribution}
 
 This characteristic function is uniquely complicated and delicate.
 See \cite{lnormCF} in the References.
 
 
-\subsection{Negative Binomial Distribution}
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, meanlog = 0, sdlog = 1, kmax = 10) 
+{
+    He <- orthopolynom:::hermite.h.polynomials(kmax, normalized = TRUE)
+    ne <- nielsen(kmax)
+    v <- c()
+    for (l in 1:(kmax + 1)) {
+        v[l] <- (-1)^(l - 1) * ne[l] * (2 * sdlog^2)^(-(l - 1)/2) * 
+            as.function(He[[l]])((log(t) + meanlog + (0+1i) * 
+                pi/2)/(sdlog * sqrt(2)))
+    }
+    sqrt(pi/2/sdlog^2) * exp(-(log(t) + meanlog + (0+1i) * pi/2)^2/(2 * 
+        sdlog^2)) * sum(v)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Negative Binomial Distribution\label{sub:Negative-Binomial-Distribution}}
 
 Let $r$ and $p$ denote the \texttt{size} and \texttt{prob} parameters,
 respectively. The characteristic function is given by \[
 \phi_{X}(t)=\left(\frac{p}{1-(1-p)\me^{it}}\right)^{r}.\]
 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, size, prob, mu) 
+{
+    if (!missing(mu)) {
+        if (!missing(prob)) 
+            stop("'prob' and 'mu' both specified")
+        prob <- size/(size + mu)
+    }
+    (prob/(1 - (1 - prob) * exp((0+1i) * t)))^size
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Normal Distribution}
@@ -263,12 +445,38 @@ parameters, respectively. The characteristic function is given by
 
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, mean = 0, sd = 1) 
+{
+    exp((0+1i) * mean - (sd * t)^2/2)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Poisson Distribution}
 
 Let $\lambda$ denote the \texttt{lambda} parameter. The characteristic
 function is given by \[
 \phi_{X}(t)=\exp\left\{ \lambda(\me^{it}-1)\right\} .\]
 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, lambda) 
+{
+    exp(lambda * (exp((0+1i) * t) - 1))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Student's $t$ Distribution}
@@ -295,12 +503,41 @@ Whew! See \cite{Bessel} in the References. Note that the c.f.~of
 the noncentral Student's $t$ distribution is not yet supported.
 
 
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, df) 
+{
+    besselK(sqrt(df) * abs(t), df/2) * (sqrt(df) * abs(t))^(df/2)/(gamma(df/2) * 
+        2^(df/2 - 1))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
 \subsection{Continuous Uniform Distribution}
 
 Let $a$ and $b$ denote the \texttt{min} and \texttt{max} parameters,
 respectively. The characteristic function is given by \[
 \phi_{X}(t)=\frac{\me^{itb}-\me^{ita}}{(b-a)it}.\]
 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, min = 0, max = 1) 
+{
+    ifelse(identical(all.equal(t, 0), TRUE), 1, (exp((0+1i) * 
+        t * max) - exp((0+1i) * t * min))/((0+1i) * t * (max - 
+        min)))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \subsection{Weibull Distribution}
@@ -313,7 +550,21 @@ respectively. The characteristic function is given by \[
 See \cite{Weibull} in the References. For the purposes of calculation,
 we may only use a finite sum to approximate the infinite series, thus
 the user must specify an upper value of $k$ to be used, denoted \texttt{kmax},
-which has the default value of \texttt{kmax} = 10. 
+which has the default value of \texttt{kmax} = 20. 
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, shape, scale = 1, kmax = 20) 
+{
+    1 + sum(((0+1i) * t)^(0:kmax + 1)/factorial(0:kmax) * scale^(0:kmax + 
+        1)/shape * gamma((0:kmax + 1)/scale))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
 
 
 \section{\textsf{R} Session information}
@@ -323,12 +574,14 @@ which has the default value of \texttt{kmax} = 10.
 > toLatex(sessionInfo())
 \end{Sinput}
 \begin{itemize}
-  \item R version 2.8.1 (2008-12-22), \verb|x86_64-pc-linux-gnu|
+  \item R version 2.8.0 (2008-10-20), \verb|i486-pc-linux-gnu|
   \item Locale: \verb|LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=C;LC_MESSAGES=en_US.UTF-8;LC_PAPER=en_US.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C|
   \item Base packages: base, datasets, graphics, grDevices, methods,
     stats, tcltk, utils
-  \item Other packages: svMisc~0.9-45, svSocket~0.9-42
+  \item Other packages: prob~0.9-2, svMisc~0.9-45, svSocket~0.9-42
 \end{itemize}\end{Schunk}
+
+
 \begin{thebibliography}{11}
 \appendix
 \bibitem{confHyp}\url{http://en.wikipedia.org/wiki/Confluent_hypergeometric_function}

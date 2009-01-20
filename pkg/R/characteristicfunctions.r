@@ -1,11 +1,11 @@
+
 #  Characteristic functions
 #  Released under GPL 2 or greater
 #  Copyright January 2009, G. Jay Kerns
 
 
 cbeta <- function(t, shape1, shape2){
-    require(fAsianOptions)
-    kummerM(1i*t, shape1, shape1 + shape2)
+    fAsianOptions:::kummerM(1i*t, shape1, shape1 + shape2)
 }
 
 
@@ -27,11 +27,10 @@ cexp <- function(t, rate = 1){
 }
 
 cf <- function(t, df1, df2, ncp = 0, kmax = 10){
-    require(fAsianOptions)
     if( identical(all.equal(ncp, 0), TRUE) ){
-        gamma((df1+df2)/2) / gamma(df2/2) * kummerU(-1i*df2*t/df1, df1/2, 1 - df2/2)
+        gamma((df1+df2)/2) / gamma(df2/2) * fAsianOptions:::kummerU(-1i*df2*t/df1, df1/2, 1 - df2/2)
     } else {
-        exp(-ncp/2)*sum((ncp/2)^(0:kmax)/factorial(0:kmax)*kummerM(-1i*df2*t/df1, df1/2 + 0:kmax, -df2/2))
+        exp(-ncp/2)*sum((ncp/2)^(0:kmax)/factorial(0:kmax)* fAsianOptions:::kummerM(-1i*df2*t/df1, df1/2 + 0:kmax, -df2/2))
     }
 }
 
@@ -48,8 +47,7 @@ cgeom <- function(t, prob){
 
 
 chyper <- function(t, m, n, k){
-    require(hypergeo)
-    hypergeo(-k, -m, n - k + 1, exp(1i*t))/hypergeo(-k, -m, n - k + 1, 1)
+    hypergeo:::hypergeo(-k, -m, n - k + 1, exp(1i*t))/hypergeo:::hypergeo(-k, -m, n - k + 1, 1)
 }
 
 
@@ -57,7 +55,7 @@ chyper <- function(t, m, n, k){
 clogis <- function(t, location = 0, scale = 1){
     ifelse( identical(all.equal(t, 0), TRUE),
             return(1),
-            return(exp(1i*location*t)*pi*scale*t/sinh(pi*scale*t)))
+            return(exp(1i*location)*pi*scale*t/sinh(pi*scale*t)))
 }
 
 
@@ -91,7 +89,7 @@ cunif <- function(t, min = 0, max = 1){
             (exp(1i*t*max) - exp(1i*t*min))/(1i*t*(max - min)))
 }
 
-cweibull <- function(t, shape, scale = 1, kmax = 10){
+cweibull <- function(t, shape, scale = 1, kmax = 20){
     1 + sum((1i*t)^(0:kmax+1)/factorial(0:kmax) * scale^(0:kmax+1)/shape * gamma((0:kmax+1)/scale) )
 }
 
@@ -100,12 +98,11 @@ cweibull <- function(t, shape, scale = 1, kmax = 10){
 
 
 clnorm <- function(t, meanlog = 0, sdlog = 1, kmax = 10){
-    require(orthopolynom)
-    He <- hermite.h.polynomials(kmax, normalized = TRUE)
+    He <- orthopolynom:::hermite.h.polynomials(kmax, normalized = TRUE)
     ne <- nielsen(kmax)
     v <- c()
     for (l in 1:(kmax+1)){
-        v[l] <- (-1)^l*ne[l]*(2*sdlog^2)^(-l/2)*as.function(He[[l]])((log(t) + meanlog + 1i*pi/2)/(sdlog*sqrt(2)))
+        v[l] <- (-1)^(l-1)*ne[l]*(2*sdlog^2)^(-(l-1)/2)*as.function(He[[l]])((log(t) + meanlog + 1i*pi/2)/(sdlog*sqrt(2)))
     }
     sqrt(pi/2/sdlog^2) * exp(-(log(t) + meanlog + 1i*pi/2)^2/(2*sdlog^2)) * sum(v)
 }
@@ -113,9 +110,9 @@ clnorm <- function(t, meanlog = 0, sdlog = 1, kmax = 10){
 
 nielsen <- function(m){
     eulerg <- 0.5772142369446214
-    d <- c(1, eulerg)
-    for (n in 2:m){    
-        d[n+1] <- (eulerg*d[n] + sum(VGAM:::zeta(2:n) * rev( (-1)^(0:(n-2)) * d[1:(n-1)])) )/(n+1)
+    a <- c(1, eulerg)
+    for (n in 3:(m+1)){    
+        a[n] <- (eulerg*a[n-1] + sum((-1)^(1:(n-2)) * VGAM:::zeta(2:(n-1)) * rev(a[1:(n-2)]) ) )/(n-1)
     }
-    return(d)
+    return(a)
 }
