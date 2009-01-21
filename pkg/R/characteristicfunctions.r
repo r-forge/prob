@@ -157,3 +157,5 @@ cfweibull <- function(t, shape, scale = 1, kmax = 20){
     1 + sum((1i*t)^(0:kmax+1)/factorial(0:kmax) * scale^(0:kmax+1)/shape * gamma((0:kmax+1)/scale) )
 }
 
+
+
