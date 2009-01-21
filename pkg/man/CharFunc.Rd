@@ -4,51 +4,51 @@
 
 \name{CharFunc}
 \concept{characteristic function}
-\alias{cbeta}
-\alias{cbinom}
-\alias{ccauchy}
-\alias{cchisq}
-\alias{cexp}
-\alias{cf}
-\alias{cgamma}
-\alias{cgeom}
-\alias{chyper}
-\alias{clogis}
-\alias{clnorm}
-\alias{cnbinom}
-\alias{cnorm}
-\alias{cpois}
-\alias{ct}
-\alias{cunif}
-\alias{cweibull}
+\alias{cfbeta}
+\alias{cfbinom}
+\alias{cfcauchy}
+\alias{cfchisq}
+\alias{cfexp}
+\alias{cff}
+\alias{cfgamma}
+\alias{cfgeom}
+\alias{cfhyper}
+\alias{cflogis}
+\alias{cflnorm}
+\alias{cfnbinom}
+\alias{cfnorm}
+\alias{cfpois}
+\alias{cft}
+\alias{cfunif}
+\alias{cfweibull}
 \title{Characteristic functions}
 \description{
   The characteristic functions for selected probability distributions supported
-  by \R.  All base distributions are included, with the exception of a few noncentral
-  variants.  For more resources please see the References, and for complete
-  details and formulas see the \code{charfunc} vignette, which can be accessed by
-  \code{vignette("charfunc")} at the command prompt.  Only the simplest formulas
-  are listed below.
+  by \R.  All base distributions are included, with the exception of
+  \code{wilcox} and \code{signedrank}.  For more resources please see the
+  References, and for complete details and formulas see the \code{charfunc}
+  vignette, which can be accessed by \code{vignette("charfunc")} at the
+  command prompt.  Only the simplest formulas are listed below.
 }
 
 \usage{
-cbeta(t, shape1, shape2)
-cbinom(t, size, prob)
-ccauchy(t, location = 0, scale = 1)
-cchisq(t, df, ncp = 0)
-cexp(t, rate = 1)
-cf(t, df1, df2, ncp = 0, kmax = 10)
-cgamma(t, shape, rate = 1, scale = 1/rate)
-cgeom(t, prob)
-chyper(t, m, n, k)
-clnorm(t, meanlog = 0, sdlog = 1)
-clogis(t, location = 0, scale = 1)
-cnbinom(t, size, prob, mu)
-cnorm(t, mean = 0, sd = 1)
-cpois(t, lambda)
-ct(t, df)
-cunif(t, min=0, max=1)
-cweibull(t, shape, scale = 1, kmax = 20)
+cfbeta(t, shape1, shape2, ncp = 0)
+cfbinom(t, size, prob)
+cfcauchy(t, location = 0, scale = 1)
+cfchisq(t, df, ncp = 0)
+cfexp(t, rate = 1)
+cff(t, df1, df2, ncp, kmax = 10)
+cfgamma(t, shape, rate = 1, scale = 1/rate)
+cfgeom(t, prob)
+cfhyper(t, m, n, k)
+cflnorm(t, meanlog = 0, sdlog = 1)
+cflogis(t, location = 0, scale = 1)
+cfnbinom(t, size, prob, mu)
+cfnorm(t, mean = 0, sd = 1)
+cfpois(t, lambda)
+cft(t, df, ncp)
+cfunif(t, min=0, max=1)
+cfweibull(t, shape, scale = 1, kmax = 20)
 }
 
 \arguments{
