@@ -80,38 +80,6 @@
 
 \section{Introduction}
 
-For the definitive reference concerning continuous and discrete univariate
-distributions, see \cite{JKBunivDisc,JKBvol1,JKBvol2}. Some of the
-characteristic functions involve special mathematical functions; the
-classical reference for those is \cite{AbramStegun}, but many of
-the definitions have made it to Wikipedia (\url{http://www.wikipedia.org/})
-and selected links to the respective Wikipedia topics have been listed. 
-
-Note that the returned value for all of the characteristic functions
-is a complex number, and is represented as such in \textsf{R}., even
-for those characteristic functions which correspond to symmetric distributions
-(and as such have real-valued characteristic functions, in principle).
-Thus, \texttt{cnorm(0) = 1 + 0i}, and \textbf{\emph{not}} \texttt{cnorm(0)
-= 1}. Depending on the application, the respective c.f.'s may need
-to be wrapped in \texttt{as.real()}.
-
-The only base \textsf{R} distributions that are not currently supported
-are \texttt{wilcox} and \texttt{signedrank}. Furthermore, the only
-c.f.'s for which we must resort to numerical integration according
-to the definition are the noncentral Beta and noncentral Student's
-$t$ distributions; as far as I can tell, these characteristic functions
-are not known in closed form. I would be interested in and appreciative
-of a reference for these cases.
-
-All of the below functions were written in straight \textsf{R} code;
-it would likely be possible to speed up evaluation if for example
-they were written in \textsf{C} or some other language. I would welcome
-any contributions by others to include such code in the \Rpackage{prob}
-package.
-
-
-\section{Characteristic functions}
-
 The characteristic function (c.f.) of a random variable $X$ is defined
 by\[
 \phi_{X}(t)=\E\me^{itX},\quad-\infty<t<\infty.\]
@@ -125,12 +93,38 @@ the c.f.~takes the form\[
 Characteristic functions have many, many useful properties: for example,
 every c.f.~is uniformly continuous and bounded in modulus (by 1).
 Furthermore, a random variable has a distribution symmetric about
-0 if and only if its associated c.f.~is real-valued. See \cite{Lukacs}
-for everything you ever wanted to know about characteristic functions,
-and much, much more.
+0 if and only if its associated c.f.~is real-valued. For details,
+see \cite{Lukacs}.
+
+Most of the below formulas came from \cite{JKBunivDisc,JKBvol1,JKBvol2}.
+Some of them involve special mathematical functions and a classical
+reference for them is \cite{AbramStegun}, but many of the definitions
+have made it to Wikipedia (\url{http://www.wikipedia.org/}) and selected
+links to the respective Wikipedia topics have been listed when appropriate. 
+
+Note that the returned value of a characteristic function is a \emph{complex}
+number, and is represented as such in \textsf{R}, even for those c.f.'s
+which correspond to symmetric distributions. Thus, \texttt{cfnorm(0)
+= 1 + 0i}, and \textbf{\emph{not}} \texttt{cfnorm(0) = 1}. Depending
+on the application, the respective c.f.'s may need to be wrapped in
+\texttt{as.real()}.
+
+All of the below functions were written in straight \textsf{R} code;
+it would likely be possible to speed up evaluation if for example
+they were written in \textsf{C} or some other language. I would welcome
+any contributions for improvement in the \Rpackage{prob} package.
+
+There are three special cases: the noncentral Beta, noncentral Student's
+$t$, and Weibull distributions. For these the c.f.'s are integrated
+numerically and thus are subject to all of numerical integration's
+limitations and idiosyncracies. I would be especially interested in
+and appreciative of a reference for these cases to be improved.
+
+
+\section{Characteristic functions}
 
 The formulas for all characteristic functions supported in the \Rpackage{prob}
-package are listed below, in alphabetical order.
+package are listed below, in alphabetical order of the function name.
 
 
 \subsection{Beta distribution: \texttt{cfbeta(t, shape1, shape2, ncp = 0)}\label{sub:Beta-distribution}}
@@ -243,7 +237,7 @@ is then\[
 f_{X}(x)=\frac{1}{\Gamma(p/2)\cdot2^{p/2}}x^{p/2-1}\me^{-x/2},\quad x>0.\]
 One way to then write the p.d.f.~of the noncentral chi-square distribution
 ($\delta>0$) is with an infinite series:\[
-f_{X}(x)=\sum_{k=0}^{\infty}\frac{\me^{-\delta/2}(\delta/2)^{k}}{k!}\, f_{p+2k}(x),\]
+f_{X}(x)=\sum_{k=0}^{\infty}\frac{\me^{-\delta/2}(\delta/2)^{k}}{k!}\, f_{p+2k}(x),\quad x>0,\]
 where $f_{p+2k}$ is the p.d.f.~of a central chi-square distribution
 with $p+2k$ degrees of freedom. The characteristic function in both
 cases is given by\[
@@ -343,7 +337,7 @@ function (t, df1, df2, ncp, kmax = 10)
 Let $\alpha$ and $\beta$ denote the \texttt{shape} and \texttt{scale}
 parameters, respectively. The p.d.f.~is then\[
 f_{X}(x)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}\, x^{\alpha-1}\me^{-x/\beta},\quad x>0.\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\left(1-\beta it\right)^{-\alpha}.\]
 
 
@@ -386,7 +380,7 @@ function (t, prob)
 
 The p.m.f.~takes the form\[
 p_{X}(x)=\frac{{m \choose x}{n \choose k-x}}{{m+n \choose k}},\quad x=0,\ldots,k;\ x\leq m;\ k-x\leq n.\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\frac{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,\me^{it}\right)}{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,1\right)},\]
 
 
@@ -420,9 +414,9 @@ function (t, m, n, k)
 Let $\mu$ and $\sigma$ denote the \texttt{location} and \texttt{scale}
 parameters, respectively. The p.d.f.~is then\[
 f_{X}(x)=\frac{\me^{-(x-\mu)/\sigma}}{\sigma\left(1+\me^{-(x-\mu)/\sigma}\right)^{2}},\quad-\infty<x<\infty.\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\me^{i\mu t}\frac{\pi\sigma t}{\sinh(\pi\sigma t)},\]
-where \[
+where\[
 \sinh(x)=\frac{\me^{x}-e^{-x}}{2}=-i\sin\, ix,\]
 see \cite{hyperbolic} in the References.
 
@@ -488,7 +482,7 @@ function (t, meanlog = 0, sdlog = 1)
 Let $r$ and $p$ denote the \texttt{size} and \texttt{prob} parameters,
 respectively. We may write the p.m.f.~as\[
 p_{X}(x)={r+x-1 \choose r-1}p^{r}(1-p)^{x},\quad x=0,\,1,\,2,\ldots\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\left(\frac{p}{1-(1-p)\me^{it}}\right)^{r}.\]
 
 
@@ -544,7 +538,7 @@ function (t, mean = 0, sd = 1)
 
 Let $\lambda$ denote the \texttt{lambda} parameter. The p.m.f.~is\[
 p_{X}(x)=\me^{-\lambda}\frac{\lambda^{x}}{x!},\quad x=0,\,1,\,2,\ldots\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\exp\left\{ \lambda(\me^{it}-1)\right\} .\]
 
 
@@ -566,11 +560,12 @@ function (t, lambda)
 
 \subsection{Wilcoxon Signed Rank Distribution: \texttt{cfsignrank(t, n)}}
 
-See \texttt{?dsignrank} for a discussion of the p.m.f.~$f_{X}$ for
-this distribution. Since the support is finite, we may calculate the
-characteristic function according to the definition:\[
+See \texttt{?dsignrank} for a discussion of the p.m.f.~for this distribution;
+it is sufficient for our purposes to know that $f_{X}$ is supported
+on the integers $x=0,1,\ldots,n(n+1)2$. Since the support is finite,
+we may calculate the characteristic function according to the definition:\[
 \phi_{X}(t)=\sum_{x=0}^{n(n+1)/2}\me^{itx}f_{X}(x),\]
-where $f_{X}$ is calculated with \texttt{dsignrank()}.
+where $f_{X}$ is given by \texttt{dsignrank()}.
 
 
 \paragraph*{Source Code:}
@@ -601,7 +596,7 @@ K_{\nu}(x)=\frac{\pi}{2}\frac{I_{-\nu}(x)-I_{-\nu}(x)}{\sin(\nu\pi)},\]
 
 
 and $I_{\alpha}$ is the \emph{modified Bessel Function of the first
-kind}, defined by \[
+kind}, defined by\[
 I_{\alpha}(x)=i^{-\alpha}J_{\alpha}(ix),\]
 
 
@@ -651,9 +646,9 @@ function (t, df, ncp)
 1)}}
 
 Let $a$ and $b$ denote the \texttt{min} and \texttt{max} parameters,
-respectively. The p.d.f.~is \[
+respectively. The p.d.f.~is\[
 f_{X}(x)=\frac{1}{b-a},\quad a<x<b.\]
-The characteristic function is given by \[
+The characteristic function is given by\[
 \phi_{X}(t)=\frac{\me^{itb}-\me^{ita}}{(b-a)it}.\]
 
 
@@ -707,11 +702,12 @@ function (t, shape, scale = 1)
 
 \subsection{Wilcoxon Rank Sum Distribution: \texttt{cfwilcox(t, m, n)}}
 
-See \texttt{?dwilcox} for a discussion of the p.m.f.~$f_{X}$ for
-this distribution. Since the support is finite, we may calculate the
-characteristic function according to the definition:\[
+See \texttt{?dwilcox} for a discussion of the p.m.f.~for this distribution;
+it is sufficient for our purposes to know that $f_{X}$ is supported
+on the integers $x=0,1,\ldots,mn$. Since the support is finite, we
+may calculate the characteristic function according to the definition:\[
 \phi_{X}(t)=\sum_{x=0}^{mn}\me^{itx}f_{X}(x),\]
-where $f_{X}$ is calculated with \texttt{dwilcox()}.
+where $f_{X}$ is given by \texttt{dwilcox()}.
 
 
 \paragraph*{Source Code:}
@@ -738,7 +734,8 @@ function (t, m, n)
   \item Locale: \verb|LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=C;LC_MESSAGES=en_US.UTF-8;LC_PAPER=en_US.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C|
   \item Base packages: base, datasets, graphics, grDevices, methods,
     stats, tcltk, utils
-  \item Other packages: prob~0.9-2, svMisc~0.9-45, svSocket~0.9-42
+  \item Other packages: prob~0.9-2, svGUI~0.9-43, svMisc~0.9-45,
+    svSocket~0.9-42
 \end{itemize}\end{Schunk}
 
 
