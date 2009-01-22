@@ -1,6 +1,6 @@
 \batchmode
 \makeatletter
-\def\input@path{{/home/jay/Desktop/mobilesch/Research/ExchSim/charfuncs//}}
+\def\input@path{{/home/jay/Desktop/mobilew/Research/ExchSim/charfuncs//}}
 \makeatother
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
@@ -75,29 +75,39 @@
 \tableofcontents{}
 
 
+\pagebreak{}
+
 
 \section{Introduction}
 
-For the definitive reference concerning characteristic functions,
-see \cite{Lukacs} in the References. For the definitive reference
-concerning continuous and discrete univariate distributions, see \cite{JKBunivDisc,JKBvol1,JKBvol2}
-in the References. Some of the characteristic functions involve special
-mathematical functions; the classical reference for such creatures
-is \cite{AbramStegun}, but many of the definitions have made it to
-Wikipedia (\url{http://www.wikipedia.org/}) and selected links to
-the respective Wikipedia topics have been listed. 
+For the definitive reference concerning continuous and discrete univariate
+distributions, see \cite{JKBunivDisc,JKBvol1,JKBvol2}. Some of the
+characteristic functions involve special mathematical functions; the
+classical reference for those is \cite{AbramStegun}, but many of
+the definitions have made it to Wikipedia (\url{http://www.wikipedia.org/})
+and selected links to the respective Wikipedia topics have been listed. 
+
+Note that the returned value for all of the characteristic functions
+is a complex number, and is represented as such in \textsf{R}., even
+for those characteristic functions which correspond to symmetric distributions
+(and as such have real-valued characteristic functions, in principle).
+Thus, \texttt{cnorm(0) = 1 + 0i}, and \textbf{\emph{not}} \texttt{cnorm(0)
+= 1}. Depending on the application, the respective c.f.'s may need
+to be wrapped in \texttt{as.real()}.
+
+The only base \textsf{R} distributions that are not currently supported
+are \texttt{wilcox} and \texttt{signedrank}. Furthermore, the only
+c.f.'s for which we must resort to numerical integration according
+to the definition are the noncentral Beta and noncentral Student's
+$t$ distributions; as far as I can tell, these characteristic functions
+are not known in closed form. I would be interested in and appreciative
+of a reference for these cases.
 
 All of the below functions were written in straight \textsf{R} code;
 it would likely be possible to speed up evaluation if for example
 they were written in \textsf{C} or some other language. I would welcome
 any contributions by others to include such code in the \Rpackage{prob}
 package.
-
-The only base \textsf{R} distributions that do not have supported
-characteristic functions are the noncentral Beta and noncentral Student's
-$t$ distributions; as far as I can tell, these characteristic functions
-are not known in closed form. I would be interested in and appreciative
-of any reference to the contrary.
 
 
 \section{Characteristic functions}
@@ -106,14 +116,14 @@ The characteristic function (c.f.) of a random variable $X$ is defined
 by\[
 \phi_{X}(t)=\E\me^{itX},\quad-\infty<t<\infty.\]
 When the distribution of $X$ is discrete with probability mass function
-$p_{X}(x)$, the c.f.~takes the form\[
+(p.m.f.) $p_{X}(x)$, the c.f.~takes the form\[
 \phi_{X}(t)=\sum_{x\in S_{X}}\me^{itx}p_{X}(x),\]
 where $S_{X}$ is the support of $X$. When the distribution of $X$
-is continuous with probability density function $f_{X}(x)$, the c.f.~takes
-the form\[
+is continuous with probability density function (p.d.f.) $f_{X}(x)$,
+the c.f.~takes the form\[
 \phi_{X}(t)=\int_{S_{X}}\me^{itx}f_{X}(x)\,\d x.\]
 Characteristic functions have many, many useful properties: for example,
-every c.f.~ is uniformly continuous and bounded in modulus (by 1).
+every c.f.~is uniformly continuous and bounded in modulus (by 1).
 Furthermore, a random variable has a distribution symmetric about
 0 if and only if its associated c.f.~is real-valued. See \cite{Lukacs}
 for everything you ever wanted to know about characteristic functions,
@@ -123,42 +133,62 @@ The formulas for all characteristic functions supported in the \Rpackage{prob}
 package are listed below, in alphabetical order.
 
 
-\subsection{Beta distribution\label{sub:Beta-distribution}}
+\subsection{Beta distribution: \texttt{cfbeta(t, shape1, shape2, ncp = 0)}\label{sub:Beta-distribution}}
 
 Let $\alpha$ and $\beta$ denote the \texttt{shape1} and \texttt{shape2}
-parameters, respectively. The characteristic function is given by
-
-\[
+parameters, respectively. The p.d.f.~is then\[
+f_{X}(x)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\, x^{\alpha-1}(1-x)^{\beta-1},\quad0<x<1,\]
+where $\Gamma$ is the \emph{gamma function} defined by\[
+\Gamma(\alpha)=\int_{0}^{\infty}u^{\alpha-1}\me^{-u}\,\d u,\quad\alpha\neq0,\,-1,\,-2,\,\ldots.\]
+The characteristic function is given by\[
 \phi_{X}(t)={}_{1}F_{1}(\alpha;\,\alpha+\beta;\, it),\]
-where $_{1}F_{1}$ is \emph{Kummer's confluent hypergeometric function},
-of the first kind, defined by \[
+where $_{1}F_{1}$ is \emph{Kummer's confluent hypergeometric function
+of the first kind}, also known as Kummer's $M$, defined by \[
 _{1}F_{1}(a;b;z)=\sum_{n=0}^{\infty}\frac{(a)_{n}z^{n}}{(b)_{n}n!},\]
 with $(a)_{n}=a(a+1)(a+2)\cdots(a+n-1)$ the \emph{rising factorial}.
 We calculate $_{1}F_{1}$ using \texttt{kummerM} in the \Rpackage{fAsianOptions}
-package. Note that the c.f.~of the noncentral Beta distribution is
-not yet supported.
+package. 
+
+As of the time of this writing, it seems that we must resort to calculating
+the characteristic function for the noncentral Beta by numerical integration
+according to the definition; see the source below. If you are aware
+of a way to more quickly/reliably calculate this c.f.~with \textsf{R},
+I would appreciate it if you would let me know.
 
 
 \paragraph*{Source Code:}
 
 \begin{Schunk}
 \begin{Soutput}
-function (t, shape1, shape2) 
+function (t, shape1, shape2, ncp = 0) 
 {
     if (shape1 <= 0 || shape2 <= 0) 
         stop("shape1, shape2 must be positive")
-    fAsianOptions:::kummerM((0+1i) * t, shape1, shape1 + shape2)
+    if (identical(all.equal(ncp, 0), TRUE)) {
+        require(fAsianOptions)
+        kummerM((0+1i) * t, shape1, shape1 + shape2)
+    }
+    else {
+        fr <- function(x) cos(t * x) * dbeta(x, shape1, shape2, 
+            ncp)
+        fi <- function(x) sin(t * x) * dbeta(x, shape1, shape2, 
+            ncp)
+        Rp <- integrate(fr, lower = 0, upper = 1)$value
+        Ip <- integrate(fi, lower = 0, upper = 1)$value
+        return(Rp + (0+1i) * Ip)
+    }
 }
 <environment: namespace:prob>
 \end{Soutput}
 \end{Schunk}
 
 
-\subsection{Binomial distribution}
+\subsection{Binomial distribution: \texttt{cfbinom(t, size, prob)}}
 
-The characteristic function is given by
-
-\[
+Let $n$ and $p$ denote the size and prob arguments, respectively.
+Then the p.m.f.~is\[
+p_{X}(x)={n \choose x}\, p^{x}(1-p)^{n-x},\quad x=0,\,1,\,2,\ldots,\, n.\]
+The characteristic function is given by\[
 \phi_{X}(t)=\left[p\me^{it}+(1-p)\right]^{n}.\]
 
 
@@ -180,14 +210,14 @@ function (t, size, prob)
 \end{Schunk}
 
 
-\subsection{Cauchy Distribution}
+\subsection{Cauchy Distribution: \texttt{cfcauchy(t, location = 0, scale = 1)}}
 
-The characteristic function is given by
+Let $\theta$ and $\sigma$ denote the \texttt{location} and \texttt{scale}
+parameters, respectively. The p.d.f.~is then\[
+f_{X}(x)=\frac{1}{\pi\sigma}\frac{1}{\left[1+(\frac{x-\theta}{\sigma})^{2}\right]},\quad-\infty<x<\infty.\]
+The characteristic function is given by\[
+\phi_{X}(t)=\me^{it\theta-\sigma|t|}.\]
 
-\[
-\phi_{X}(t)=\me^{it\theta-\sigma|t|},\]
-where $\theta$ and $\sigma$ are the \texttt{location} and \texttt{scale}
-parameters, respectively.
 
 
 \paragraph*{Source Code:}
@@ -198,19 +228,25 @@ function (t, location = 0, scale = 1)
 {
     if (scale <= 0) 
         stop("scale must be positive")
-    exp((0+1i) * location * t) * exp(-scale * abs(t))
+    exp((0+1i) * location * t - scale * abs(t))
 }
 <environment: namespace:prob>
 \end{Soutput}
 \end{Schunk}
 
 
-\subsection{Chi-square Distribution}
+\subsection{Chi-square Distribution: \texttt{cfchisq(t, df, ncp = 0)}}
 
 Let $p$ and $\delta$ denote the \texttt{df} and \texttt{ncp} parameters,
-resectively. Then the characteristic function is given by
-
-\[
+respectively. The p.d.f.~of the central chi-square distribution ($\delta=0$)
+is then\[
+f_{X}(x)=\frac{1}{\Gamma(p/2)\cdot2^{p/2}}x^{p/2-1}\me^{-x/2},\quad x>0.\]
+One way to then write the p.d.f.~of the noncentral chi-square distribution
+($\delta>0$) is with an infinite series:\[
+f_{X}(x)=\sum_{k=0}^{\infty}\frac{\me^{-\delta/2}(\delta/2)^{k}}{k!}\, f_{p+2k}(x),\]
+where $f_{p+2k}$ is the p.d.f.~of a central chi-square distribution
+with $p+2k$ degrees of freedom. The characteristic function in both
+cases is given by\[
 \phi_{X}(t)=\frac{\exp\left\{ \frac{i\delta t}{1-2it}\right\} }{(1-2it)^{p/2}}.\]
 
 
@@ -230,7 +266,7 @@ function (t, df, ncp = 0)
 \end{Schunk}
 
 
-\subsection{Exponential Distribution}
+\subsection{Exponential Distribution: \texttt{cfexp(t, rate = 1)}}
 
 This is the special case of the Gamma distribution when $\alpha=1$.
 See Section \ref{sub:Gamma-Distribution}.
@@ -242,58 +278,59 @@ See Section \ref{sub:Gamma-Distribution}.
 \begin{Soutput}
 function (t, rate = 1) 
 {
-    cgamma(t, shape = 1, scale = 1/rate)
+    cfgamma(t, shape = 1, scale = 1/rate)
 }
 <environment: namespace:prob>
 \end{Soutput}
 \end{Schunk}
 
 
-\subsection{$F$ Distribution}
+\subsection{$F$ Distribution: \texttt{cff(t, df1, df2, ncp, kmax = 10)}}
 
 Let $p$ and $q$ denote the \texttt{df1} and \texttt{df2} parameters,
 respectively, and let $\lambda$ denote the noncentrality parameter
-\texttt{ncp}. For the noncentral $F$ distribution ($\lambda\neq0$)
-the characteristic function is given by \[
+\texttt{ncp}. We may write the p.d.f.~for the central $F$ distribution
+($\lambda=0$) with\[
+f_{X}(x)=\frac{\Gamma[(p+q)/2]}{\Gamma(p/2)\Gamma(q/2)}\,\left(\frac{p}{q}\right)^{p/2}\, x^{p/2-1}\,\left(1+\frac{p}{q}x\right)^{-(p+q)/2},\quad x>0.\]
+The characteristic function for central $F$ is given by\[
+\phi_{X}(t)=\frac{\Gamma[(p+q)/2]}{\Gamma(q/2)}\Psi\left(\frac{p}{2},\,1-\frac{q}{2};\,-\frac{q}{p}it\right),\]
+where $\Psi$ is \emph{Kummer's confluent hypergeometric function
+of the second kind}, also known as Kummer's $U$, defined by\[
+\Psi(a,b;z)=\frac{\pi}{\sin\,\pi b}\left(\frac{_{1}F_{1}(a;b;z)}{\Gamma(1+a-b)\Gamma(b)}-z^{1-b}\frac{_{1}F_{1}(1+a-b;\,2-b;\, z)}{\Gamma(a)\Gamma(2-b)}\right).\]
+See \cite{confHyp} in the references. Kummer's $U$ is calculated
+with \texttt{kummerU}, again from the \Rpackage{fAsianOptions} package. 
+
+The p.d.f.~of the noncentral $F$ distribution ($\lambda\neq0$)
+as\[
+f_{X}(x)=f_{p,q}(x)\,\me^{-\lambda/2}\sum_{k=0}^{\infty}\left\{ \left(\frac{\frac{1}{2}\lambda px}{q+px}\right)^{k}\cdot\frac{(p+q)(p+q+2)\cdots(p+q+2\cdot\overline{k-1})}{k!\, p(p+2)\cdots(p+2\cdot\overline{k-1})}\right\} ,\quad x>0,\]
+where $f_{p,q}$ is the p.d.f.~of the central $F$ distribution.
+The characteristic function for the noncentral $F$ distribution is
+given by \[
 \phi_{X}(t)=\me^{-\lambda/2}\sum_{k=0}^{\infty}\frac{(\lambda/2)^{k}}{k!}{}_{1}F_{1}\left(\frac{p}{2}+k;\,-\frac{q}{2};\,-\frac{qit}{p}\right),\]
 where $_{1}F_{1}$ is Kummer's confluent hypergeometric function of
-the first kind; see Section \ref{sub:Beta-distribution}. For the
-purposes of calculation, we may only use a finite sum to approximate
-the infinite series, thus the user must specify an upper value of
+the first kind defined above; see Section \ref{sub:Beta-distribution}.
+For the purposes of calculation, we may only use a finite sum to approximate
+the infinite series, thus the user should specify an upper value of
 $k$ to be used, denoted \texttt{kmax}, which has the default value
 of \texttt{kmax} = 10. 
-
-For central $F$ (when $\lambda=0$) we use \emph{Kummer's confluent
-hypergeometric function of the second kind}, also known as Kummer's
-$U$, defined by
-
-\[
-\Psi(a,b;z)=\frac{\pi}{\sin\,\pi b}\left(\frac{_{1}F_{1}(a;b;z)}{\Gamma(1+a-b)\Gamma(b)}-z^{1-b}\frac{_{1}F_{1}(1+a-b;\,2-b;\, z)}{\Gamma(a)\Gamma(2-b)}\right).\]
-
-
-See \cite{confHyp} in the references. Kummer's $U$ is calculated
-with \texttt{kummerU}, again from the \Rpackage{fAsianOptions} package.
-The characteristic function for central $F$ is given by \[
-\phi_{X}(t)=\frac{\Gamma[(p+q)/2]}{\Gamma(q/2)}\Psi\left(\frac{p}{2},\,1-\frac{q}{2};\,-\frac{q}{p}it\right).\]
-
 
 
 \paragraph*{Source Code:}
 
 \begin{Schunk}
 \begin{Soutput}
-function (t, df1, df2, ncp = 0, kmax = 10) 
+function (t, df1, df2, ncp, kmax = 10) 
 {
     if (df1 <= 0 || df2 <= 0) 
         stop("df1 and df2 must be positive")
+    require(fAsianOptions)
     if (identical(all.equal(ncp, 0), TRUE)) {
-        gamma((df1 + df2)/2)/gamma(df2/2) * fAsianOptions:::kummerU(-(0+1i) * 
+        gamma((df1 + df2)/2)/gamma(df2/2) * kummerU(-(0+1i) * 
             df2 * t/df1, df1/2, 1 - df2/2)
     }
     else {
         exp(-ncp/2) * sum((ncp/2)^(0:kmax)/factorial(0:kmax) * 
-            fAsianOptions:::kummerM(-(0+1i) * df2 * t/df1, df1/2 + 
-                0:kmax, -df2/2))
+            kummerM(-(0+1i) * df2 * t/df1, df1/2 + 0:kmax, -df2/2))
     }
 }
 <environment: namespace:prob>
@@ -301,11 +338,12 @@ function (t, df1, df2, ncp = 0, kmax = 10)
 \end{Schunk}
 
 
-\subsection{Gamma Distribution\label{sub:Gamma-Distribution}}
+\subsection{Gamma Distribution: \texttt{cfgamma(t, shape, scale = 1/rate)}\label{sub:Gamma-Distribution}}
 
 Let $\alpha$ and $\beta$ denote the \texttt{shape} and \texttt{scale}
-parameters, respectively. The characteristic function is given by
-\[
+parameters, respectively. The p.d.f.~is then\[
+f_{X}(x)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}\, x^{\alpha-1}\me^{-x/\beta},\quad x>0.\]
+The characteristic function is given by \[
 \phi_{X}(t)=\left(1-\beta it\right)^{-\alpha}.\]
 
 
@@ -325,7 +363,7 @@ function (t, shape, rate = 1, scale = 1/rate)
 \end{Schunk}
 
 
-\subsection{Geometric Distribution}
+\subsection{Geometric Distribution: \texttt{cfgeom(t, prob)}}
 
 This is the special case of the Negative Binomial distribution when
 $r=1$; see Section \ref{sub:Negative-Binomial-Distribution}.
@@ -337,15 +375,17 @@ $r=1$; see Section \ref{sub:Negative-Binomial-Distribution}.
 \begin{Soutput}
 function (t, prob) 
 {
-    cnbinom(t, size = 1, prob = prob)
+    cfnbinom(t, size = 1, prob = prob)
 }
 <environment: namespace:prob>
 \end{Soutput}
 \end{Schunk}
 
 
-\subsection{Hypergeometric Distribution}
+\subsection{Hypergeometric Distribution: \texttt{cfhyper(t, m, n, k)}}
 
+The p.m.f.~takes the form\[
+p_{X}(x)=\frac{{m \choose x}{n \choose k-x}}{{m+n \choose k}},\quad x=0,\ldots,k;\ x\leq m;\ k-x\leq n.\]
 The characteristic function is given by \[
 \phi_{X}(t)=\frac{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,\me^{it}\right)}{_{2}F_{1}\left(-k,\,-m;\, n-k+1;\,1\right)},\]
 
@@ -375,8 +415,11 @@ function (t, m, n, k)
 \end{Schunk}
 
 
-\subsection{Logistic Distribution}
+\subsection{Logistic Distribution: \texttt{cflogis(t, location = 0, scale = 1)}}
 
+Let $\mu$ and $\sigma$ denote the \texttt{location} and \texttt{scale}
+parameters, respectively. The p.d.f.~is then\[
+f_{X}(x)=\frac{\me^{-(x-\mu)/\sigma}}{\sigma\left(1+\me^{-(x-\mu)/\sigma}\right)^{2}},\quad-\infty<x<\infty.\]
 The characteristic function is given by \[
 \phi_{X}(t)=\me^{i\mu t}\frac{\pi\sigma t}{\sinh(\pi\sigma t)},\]
 where \[
@@ -400,9 +443,12 @@ function (t, location = 0, scale = 1)
 \end{Schunk}
 
 
-\subsection{Lognormal Distribution}
+\subsection{Lognormal Distribution: \texttt{cflnorm(t, meanlog = 0, sdlog = 1)}}
 
-This characteristic function is uniquely complicated and delicate.
+Let $\mu$ and $\sigma$ denote the \texttt{meanlog} and \texttt{sdlog}
+parameters, respectively. The p.d.f.~is then\[
+f_{X}(x)=\frac{1}{\sigma\sqrt{2\pi}}\frac{1}{x}\me^{-(\ln x-\mu)^{2}/2\sigma^{2}},\quad-\infty<x<\infty.\]
+The characteristic function is uniquely complicated and delicate.
 See \cite{lnormCF} in the References. For fast numerical computation
 an algorithm due to Beaulieu is used, see \cite{clnorm}. 
 
@@ -437,10 +483,12 @@ function (t, meanlog = 0, sdlog = 1)
 \end{Schunk}
 
 
-\subsection{Negative Binomial Distribution\label{sub:Negative-Binomial-Distribution}}
+\subsection{Negative Binomial Distribution: \texttt{cfnbinom(t, size, prob, mu)}\label{sub:Negative-Binomial-Distribution}}
 
 Let $r$ and $p$ denote the \texttt{size} and \texttt{prob} parameters,
-respectively. The characteristic function is given by \[
+respectively. We may write the p.m.f.~as\[
+p_{X}(x)={r+x-1 \choose r-1}p^{r}(1-p)^{x},\quad x=0,\,1,\,2,\ldots\]
+The characteristic function is given by \[
 \phi_{X}(t)=\left(\frac{p}{1-(1-p)\me^{it}}\right)^{r}.\]
 
 
@@ -467,11 +515,12 @@ function (t, size, prob, mu)
 \end{Schunk}
 
 
-\subsection{Normal Distribution}
+\subsection{Normal Distribution: \texttt{cfnorm(t, mean = 0, sd = 1)}}
 
 Let $\mu$ and $\sigma$ denote the \texttt{mean} and \texttt{sd}
-parameters, respectively. The characteristic function is given by
-\[
+parameters, respectively. The p.d.f.~is\[
+f_{X}(x)=\frac{1}{\sigma\sqrt{2\pi}}\,\me^{-(x-\mu)^{2}/2\sigma^{2}},\quad-\infty<x<\infty.\]
+The characteristic function is given by \[
 \phi_{X}(t)=\me^{i\mu t+\sigma^{2}t^{2}/2}.\]
 
 
@@ -491,10 +540,11 @@ function (t, mean = 0, sd = 1)
 \end{Schunk}
 
 
-\subsection{Poisson Distribution}
+\subsection{Poisson Distribution: \texttt{cfpois(t, lambda)}}
 
-Let $\lambda$ denote the \texttt{lambda} parameter. The characteristic
-function is given by \[
+Let $\lambda$ denote the \texttt{lambda} parameter. The p.m.f.~is\[
+p_{X}(x)=\me^{-\lambda}\frac{\lambda^{x}}{x!},\quad x=0,\,1,\,2,\ldots\]
+The characteristic function is given by \[
 \phi_{X}(t)=\exp\left\{ \lambda(\me^{it}-1)\right\} .\]
 
 
@@ -514,11 +564,36 @@ function (t, lambda)
 \end{Schunk}
 
 
-\subsection{Student's $t$ Distribution}
+\subsection{Wilcoxon Signed Rank Distribution: \texttt{cfsignrank(t, n)}}
 
-This formula used was published by Hurst, see \cite{studentst}. Let
-$p$ denote the \texttt{df} parameter. The characteristic function
-is given by \[
+See \texttt{?dsignrank} for a discussion of the p.m.f.~$f_{X}$ for
+this distribution. Since the support is finite, we may calculate the
+characteristic function according to the definition:\[
+\phi_{X}(t)=\sum_{x=0}^{n(n+1)/2}\me^{itx}f_{X}(x),\]
+where $f_{X}$ is calculated with \texttt{dsignrank()}.
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, n) 
+{
+    sum(exp((0+1i) * t * 0:((n + 1) * n/2)) * dsignrank(0:((n + 
+        1) * n/2), n))
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Student's $t$ Distribution: \texttt{cft(t, df, ncp)}}
+
+Let $p$ denote the \texttt{df} parameter. The p.d.f.~is \[
+f_{X}(x)=\frac{\Gamma[(p+1)/2]}{\sqrt{p\pi}\Gamma(p/2)}\left(1+\frac{x^{2}}{p}\right)^{-(p+1)/2},\quad-\infty<x<\infty.\]
+The formula used for the characteristic function was published by
+Hurst, see \cite{studentst}. The characteristic function is given
+by \[
 \phi_{X}(t)=\frac{K_{p/2}(\sqrt{p}|t|)\cdot(\sqrt{p}|t|)^{p/2}}{\Gamma(p/2)2^{p/2-1}},\]
 where $K_{\nu}$ is the \emph{modified Bessel Function of the second
 kind}, defined by\[
@@ -535,30 +610,50 @@ defined by\[
 J_{\alpha}(x)=\sum_{m=0}^{\infty}\frac{(-1)^{m}}{m!\Gamma(m+\alpha+1)}\left(\frac{x}{2}\right)^{2m+\alpha}.\]
 
 
-Whew! See \cite{Bessel} in the References. Note that the c.f.~of
-the noncentral Student's $t$ distribution is not yet supported.
+Whew! See \cite{Bessel} in the References. 
+
+As of the time of this writing, it seems that we must resort to calculating
+the characteristic function for the noncentral Student's $t$ by numerical
+integration according to the definition; see the source below. If
+you are aware of a way to more quickly/reliably calculate this c.f.~with
+\textsf{R}, I would appreciate it if you would let me know.
 
 
 \paragraph*{Source Code:}
 
 \begin{Schunk}
 \begin{Soutput}
-function (t, df) 
+function (t, df, ncp) 
 {
+    if (missing(ncp)) 
+        ncp <- 0
     if (df <= 0) 
-        stop("df be positive")
-    besselK(sqrt(df) * abs(t), df/2) * (sqrt(df) * abs(t))^(df/2)/(gamma(df/2) * 
-        2^(df/2 - 1))
+        stop("df must be positive")
+    if (identical(all.equal(ncp, 0), TRUE)) {
+        ifelse(identical(all.equal(t, 0), TRUE), 1 + (0+0i), 
+            as.complex(besselK(sqrt(df) * abs(t), df/2) * (sqrt(df) * 
+                abs(t))^(df/2)/(gamma(df/2) * 2^(df/2 - 1))))
+    }
+    else {
+        fr <- function(x) cos(t * x) * dt(x, df, ncp)
+        fi <- function(x) sin(t * x) * dt(x, df, ncp)
+        Rp <- integrate(fr, lower = -Inf, upper = Inf)$value
+        Ip <- integrate(fi, lower = -Inf, upper = Inf)$value
+        return(Rp + (0+1i) * Ip)
+    }
 }
 <environment: namespace:prob>
 \end{Soutput}
 \end{Schunk}
 
 
-\subsection{Continuous Uniform Distribution}
+\subsection{Continuous Uniform Distribution: \texttt{cfunif(t, min = 0, max =
+1)}}
 
 Let $a$ and $b$ denote the \texttt{min} and \texttt{max} parameters,
-respectively. The characteristic function is given by \[
+respectively. The p.d.f.~is \[
+f_{X}(x)=\frac{1}{b-a},\quad a<x<b.\]
+The characteristic function is given by \[
 \phi_{X}(t)=\frac{\me^{itb}-\me^{ita}}{(b-a)it}.\]
 
 
@@ -571,7 +666,7 @@ function (t, min = 0, max = 1)
 {
     if (max < min) 
         stop("min cannot be greater than max")
-    ifelse(identical(all.equal(t, 0), TRUE), 1, (exp((0+1i) * 
+    ifelse(identical(all.equal(t, 0), TRUE), 1 + (0+0i), (exp((0+1i) * 
         t * max) - exp((0+1i) * t * min))/((0+1i) * t * (max - 
         min)))
 }
@@ -580,29 +675,52 @@ function (t, min = 0, max = 1)
 \end{Schunk}
 
 
-\subsection{Weibull Distribution}
+\subsection{Weibull Distribution: \texttt{cfweibull(t, shape, scale = 1)}}
 
 Let $a$ and $b$ denote the \texttt{shape} and \texttt{scale} parameters,
-respectively. The characteristic function is given by \[
-\phi_{X}(t)=1+\sum_{k=0}^{\infty}\frac{(it)^{k+1}}{k!}\,\frac{a^{k+1}}{b}\Gamma\left(\frac{k+1}{b}\right).\]
-
-
-See \cite{Weibull} in the References. For the purposes of calculation,
-we may only use a finite sum to approximate the infinite series, thus
-the user must specify an upper value of $k$ to be used, denoted \texttt{kmax},
-which has the default value of \texttt{kmax} = 20. 
+respectively. The p.d.f.~is\[
+f_{X}(x)=\frac{a}{b}\left(\frac{x}{b}\right)^{a-1}\me^{-(x/b)^{a}},\quad0<x<\infty.\]
+At the time of this writing, we must resort to calculating the characteristic
+function according to the definition; see the source below. If you
+know of a way to more quickly/reliably calculate this c.f.~with \textsf{R},
+I would appreciate it if you would let me know. 
 
 
 \paragraph*{Source Code:}
 
 \begin{Schunk}
 \begin{Soutput}
-function (t, shape, scale = 1, kmax = 20) 
+function (t, shape, scale = 1) 
 {
     if (shape <= 0 || scale <= 0) 
         stop("shape and scale must be positive")
-    1 + sum(((0+1i) * t)^(0:kmax + 1)/factorial(0:kmax) * scale^(0:kmax + 
-        1)/shape * gamma((0:kmax + 1)/scale))
+    fr <- function(x) cos(t * x) * dweibull(x, shape, scale)
+    fi <- function(x) sin(t * x) * dweibull(x, shape, scale)
+    Rp <- integrate(fr, lower = 0, upper = Inf)$value
+    Ip <- integrate(fi, lower = 0, upper = Inf)$value
+    return(Rp + (0+1i) * Ip)
+}
+<environment: namespace:prob>
+\end{Soutput}
+\end{Schunk}
+
+
+\subsection{Wilcoxon Rank Sum Distribution: \texttt{cfwilcox(t, m, n)}}
+
+See \texttt{?dwilcox} for a discussion of the p.m.f.~$f_{X}$ for
+this distribution. Since the support is finite, we may calculate the
+characteristic function according to the definition:\[
+\phi_{X}(t)=\sum_{x=0}^{mn}\me^{itx}f_{X}(x),\]
+where $f_{X}$ is calculated with \texttt{dwilcox()}.
+
+
+\paragraph*{Source Code:}
+
+\begin{Schunk}
+\begin{Soutput}
+function (t, m, n) 
+{
+    sum(exp((0+1i) * t * 0:(m * n)) * dwilcox(0:(m * n), m, n))
 }
 <environment: namespace:prob>
 \end{Soutput}
@@ -616,7 +734,7 @@ function (t, shape, scale = 1, kmax = 20)
 > toLatex(sessionInfo())
 \end{Sinput}
 \begin{itemize}
-  \item R version 2.8.1 (2008-12-22), \verb|x86_64-pc-linux-gnu|
+  \item R version 2.8.0 (2008-10-20), \verb|i486-pc-linux-gnu|
   \item Locale: \verb|LC_CTYPE=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8;LC_COLLATE=en_US.UTF-8;LC_MONETARY=C;LC_MESSAGES=en_US.UTF-8;LC_PAPER=en_US.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=en_US.UTF-8;LC_IDENTIFICATION=C|
   \item Base packages: base, datasets, graphics, grDevices, methods,
     stats, tcltk, utils
@@ -624,13 +742,13 @@ function (t, shape, scale = 1, kmax = 20)
 \end{itemize}\end{Schunk}
 
 
-\begin{thebibliography}{13}
+\begin{thebibliography}{12}
 \appendix
 \bibitem{confHyp}\url{http://en.wikipedia.org/wiki/Confluent_hypergeometric_function}
 
-\bibitem{AbramStegun}Abramowitz, Milton; Stegun, Irene A., eds. (1965).
-Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical
-Tables, New York: Dover, ISBN 0-486-61272-4
+\bibitem{AbramStegun}Abramowitz, Milton; Stegun, Irene A., eds. (1965)
+\emph{Handbook of Mathematical Functions with Formulas, Graphs, and
+Mathematical Tables}, New York: Dover
 
 \bibitem{GaussHyper}\url{http://en.wikipedia.org/wiki/Hypergeometric_series}
 
@@ -640,30 +758,25 @@ Tables, New York: Dover, ISBN 0-486-61272-4
 
 \bibitem{Bessel}\url{http://en.wikipedia.org/wiki/Bessel_function}
 
-\bibitem{Weibull}Muraleedharan, G.~\emph{et al.} (2007). \textquotedbl{}Modified
-Weibull distribution for maximum and significant wave height simulation
-and prediction\textquotedbl{}. Coastal Engineering 54 (8): 630\textendash{}638.
-\url{http://dx.doi.org/10.1016%2Fj.coastaleng.2007.05.001}
-
 \bibitem{Lukacs}Lukacs, E. (1970). \emph{Characteristic Functions},
 Second Edition. London: Griffin.
 
-\bibitem{JKBunivDisc}Johnson, N. L., Kotz, S., and Kemp, A. W. (1992).
+\bibitem{JKBunivDisc}Johnson, N. L., Kotz, S., and Kemp, A. W. (1992)
 \emph{Univariate Discrete Distributions}, Second Edition. New York:
 Wiley.
 
-\bibitem{JKBvol1}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995).
+\bibitem{JKBvol1}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995)
 \emph{Continuous Univariate Distributions}, volume 1. Wiley, New York.
 
-\bibitem{JKBvol2}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995).
+\bibitem{JKBvol2}Johnson, N. L., Kotz, S. and Balakrishnan, N. (1995)
 \emph{Continuous Univariate Distributions}, volume 2. Wiley, New York.
 
-\bibitem{clnorm}Beaulieu, N.C. (2008). \emph{Fast convenient numerical
-computation of lognormal characteristic functions}, IEEE Transactions
-on Communications, Volume 56, Issue 3, 331--333.
+\bibitem{clnorm}Beaulieu, N.C. (2008) Fast convenient numerical computation
+of lognormal characteristic functions, \emph{IEEE Transactions on
+Communications}, \textbf{56} (3): 331--333.
 
-\bibitem{studentst}Hurst, S. (1995). \emph{The Characteristic Function
-of the Student-t Distribution}, Financial Mathematics Research Report
+\bibitem{studentst}Hurst, S. (1995) The Characteristic Function of
+the Student-t Distribution, Financial Mathematics Research Report
 No. FMRR006-95, Statistics Research Report No. SRR044-95, available
 online: \url{http://wwwmaths.anu.edu.au/research.reports/srr/95/044/}
 \end{thebibliography}
