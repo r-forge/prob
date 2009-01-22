@@ -18,9 +18,11 @@
 \alias{cfnbinom}
 \alias{cfnorm}
 \alias{cfpois}
+\alias{cfsignrank}
 \alias{cft}
 \alias{cfunif}
 \alias{cfweibull}
+\alias{cfwilcox}
 \title{Characteristic functions}
 \description{
   The characteristic functions for selected probability distributions supported
@@ -46,9 +48,11 @@ cflogis(t, location = 0, scale = 1)
 cfnbinom(t, size, prob, mu)
 cfnorm(t, mean = 0, sd = 1)
 cfpois(t, lambda)
+csignrank(t, m, n)
 cft(t, df, ncp)
 cfunif(t, min=0, max=1)
-cfweibull(t, shape, scale = 1, kmax = 20)
+cfweibull(t, shape, scale = 1)
+cfwilcox(t, n)
 }
 
 \arguments{
