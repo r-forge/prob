@@ -48,11 +48,11 @@ cflogis(t, location = 0, scale = 1)
 cfnbinom(t, size, prob, mu)
 cfnorm(t, mean = 0, sd = 1)
 cfpois(t, lambda)
-csignrank(t, m, n)
+cfsignrank(t, n)
 cft(t, df, ncp)
 cfunif(t, min=0, max=1)
 cfweibull(t, shape, scale = 1)
-cfwilcox(t, n)
+cfwilcox(t, m, n)
 }
 
 \arguments{
@@ -100,13 +100,15 @@ cfwilcox(t, n)
 \section{Beta distribution}{
   For the probability density function, see \code{\link{dbeta}}.
     
-  The characteristic function is given by
+  The characteristic function for central Beta is given by
   \deqn{ \phi(t) = _{1}F_{1}(\alpha; \alpha + \beta, it) }{
     phi(t) = _{1}F_{1}(shape1; shape1 + shape2, it) 
   }
   where \eqn{F} is the confluent hypergeometric function calculated with
   \code{\link[fAsianOptions]{kummerM}} in the \code{fAsianOptions} package.
-  Note that the noncentral beta is not yet supported. 
+  
+  As of the time of this writing, we must calculate the characteristic function
+  of the noncentral Beta with numerical integration according to the definition.
 }
 
 
@@ -234,12 +236,19 @@ cfwilcox(t, n)
   }
 }
 
+\section{Wilcoxon Sign Rank Distribution}{
+  For the probability density function, see \code{\link{dsignrank}}.
+
+  The characteristic function is calculated according to the definition.
+}
 
 \section{Student's t Distribution}{
   For the probability density function, see \code{\link{dt}}.
 
-  See the vignette for a formula for the characteristic function. Note that the
-  noncentral distribution is not yet supported.
+  See the vignette for a formula for the characteristic function for central t.
+  
+  As of the time of this writing, we must calculate the characteristic function
+  of the noncentral t with numerical integration according to the definition.
 }
 
 
@@ -254,12 +263,17 @@ cfwilcox(t, n)
   }
 }
 
-
 \section{Weibull Distribution}{
   For the probability density function, see \code{\link{dweibull}}.
 
-  The formula for the characteristic function is too complicated to be listed
-  here;  please see the vignette and the References.
+  We must at the time of this writing calculate the characteristic function
+  with numerical integration according to the definition.
+}
+
+\section{Wilcoxon Rank Sum Distribution}{
+  For the probability density function, see \code{\link{dwilcox}}.
+
+  The characteristic function is calculated according to the definition.
 }
 
 \source{
@@ -296,7 +310,6 @@ cfwilcox(t, n)
   Lukacs, E. (1970)
   \emph{Characteristic Functions},
   Second Edition. London: Griffin.
-
 }
 
 \author{G. Jay Kerns \email{gkerns@ysu.edu}.}
