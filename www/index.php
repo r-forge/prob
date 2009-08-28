@@ -44,7 +44,7 @@
       <p class="articleTitle">Contact Information </p>
       <blockquote>
         <p> <span class="name">PROB</span> comments, suggestions, bugs:   <a href="mailto:prob-help@list.r-forge.org">prob-help@list.r-forge.org</a><br>
-G. Jay Kerns: <a href="mailto:gkerns@ysu.edu">gkerns@ysu.edu</a> (<a href="http://www.cc.ysu.edu/%7Egjkerns">home page</a>)</p>
+G. Jay Kerns: <a href="mailto:gkerns@ysu.edu">gkerns@ysu.edu</a> (<a href="http://people.ysu.edu/%7Egkerns">home page</a>)</p>
         <p>&nbsp;</p>
       </blockquote>
 	  <p align="center">
