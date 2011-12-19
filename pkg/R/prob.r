@@ -1,11 +1,11 @@
 
 
 
-`prob` <- function (x, ...)
-UseMethod("prob")
+`Prob` <- function (x, ...)
+UseMethod("Prob")
 
 
-`prob.default` <- function (x, event = NULL, given = NULL, ...){
+`Prob.default` <- function (x, event = NULL, given = NULL, ...){
     if (is.null(x$probs)) {
         message("'space' is missing a probs column")
         stop("see ?probspace")
@@ -51,7 +51,7 @@ UseMethod("prob")
 
 
 
-`prob.ps` <- function (x, event = NULL, given = NULL, ...){
+`Prob.ps` <- function (x, event = NULL, given = NULL, ...){
     if (is.null(x$probs)) {
         message("'space' is missing a probs component")
         stop("see ?probspace")

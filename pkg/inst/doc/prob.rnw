@@ -220,7 +220,7 @@ To accomplish this in \texttt{R}, we may use the \texttt{probspace()} function. 
 The equally likely model asserts that every outcome of the sample space has the same probability, thus, if a sample space has $n$ outcomes, then \texttt{probs} would be a vector of length $n$ with identical entries $1/n$.  The quickest way to generate \texttt{probs} is with the \texttt{rep()} function.  We will start with the experiment of rolling a die, so that $n=6$.  We will construct the sample space, generate the \texttt{probs} vector, and put them together with \texttt{probspace()}.
 <<echo=TRUE,print=TRUE>>=
 outcomes = rolldie(1)
-p = rep(1/6, times = 6)
+p <- rep(1/6, times = 6)
 probspace(outcomes, probs = p)
 @
 The \texttt{probspace()} function is designed to save us some time in many of the most common situations.  For example, due to the especial simplicity of the sample space in this case, we could have achieved the same result with simply (note the name change for the first column)
@@ -377,7 +377,7 @@ There have been methods written for \texttt{intersect()}, \texttt{setdiff()}, \t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Calculating Probabilities}
-Now that we have ways to find subsets, we can at last move to calculating the probabilities associated with them.  This is accomplished with the \texttt{prob()} function.
+Now that we have ways to find subsets, we can at last move to calculating the probabilities associated with them.  This is accomplished with the \texttt{Prob()} function.
 
 Consider the experiment of drawing a card from a standard deck of playing cards.  Let's denote the probability space associated with the experiment as $S$, and let the subsets $A$ and $B$ be defined by the following:
 <<echo=TRUE,print=FALSE>>=
@@ -387,17 +387,17 @@ B = subset(S, rank %in% 7:9)
 @
 Now it is easy to calculate
 <<echo=TRUE,print=TRUE>>=
-prob(A)
+Prob(A)
 @
 Note that we can get the same answer with
 <<echo=TRUE,print=TRUE>>=
-prob(S, suit == "Heart")
+Prob(S, suit == "Heart")
 @
-We also find \texttt{prob(B) = 0.23} (listed here approximately, but 12/52 actually) and \texttt{prob(S)=1}.  In essence, the \texttt{prob()} function operates by summing the \texttt{probs} column of its argument.  It will find subsets ``on-the-fly'' if desired.
+We also find \texttt{Prob(B) = 0.23} (listed here approximately, but 12/52 actually) and \texttt{Prob(S)=1}.  In essence, the \texttt{Prob()} function operates by summing the \texttt{probs} column of its argument.  It will find subsets ``on-the-fly'' if desired.
 
-We have as yet glossed over the details.  More specifically, \texttt{prob()} has three arguments:  \texttt{x} which is a probability space (or a subset of one), \texttt{event} which is a logical expression used to define a subset, and \texttt{given} which is described in the next subsection.
+We have as yet glossed over the details.  More specifically, \texttt{Prob()} has three arguments:  \texttt{x} which is a probability space (or a subset of one), \texttt{event} which is a logical expression used to define a subset, and \texttt{given} which is described in the next subsection.
 
-\emph{WARNING}.  The \texttt{event} argument is used to define a subset of \texttt{x}, that is, the only outcomes used in the probability calculation will be those that are elements of \texttt{x} and satisfy \texttt{event} simultaneously. In other words, \texttt{prob(x,event)} calculates \texttt{prob(intersect(x, subset(x, event)))}.  Consequently, \texttt{x} should be the entire probability space in the case that \texttt{event} is non-null.
+\emph{WARNING}.  The \texttt{event} argument is used to define a subset of \texttt{x}, that is, the only outcomes used in the probability calculation will be those that are elements of \texttt{x} and satisfy \texttt{event} simultaneously. In other words, \texttt{Prob(x,event)} calculates \texttt{Prob(intersect(x, subset(x, event)))}.  Consequently, \texttt{x} should be the entire probability space in the case that \texttt{event} is non-null.
 
 
 \subsection{Conditional Probability}
@@ -405,36 +405,36 @@ The conditional probability of the subset $A$ given the event $B$ is defined to 
 $$
 \P(A|B)=\frac{\P(A\cap B)}{\P(B)},\quad \mbox{if $\P(B)>0.$}
 $$
-We already have all of the machinery needed to compute conditional probability. All that is necessary is to use the \texttt{given} argument to the \texttt{prob()} function, which will accept input in the form of a data frame or a logical expression.   Using the above example with $S$=\{draw a card\}, $A=$\{\texttt{suit = "Heart"}\}, and $B$=\{\texttt{rank} is \texttt{7, 8, or 9}\}.
+We already have all of the machinery needed to compute conditional probability. All that is necessary is to use the \texttt{given} argument to the \texttt{Prob()} function, which will accept input in the form of a data frame or a logical expression.   Using the above example with $S$=\{draw a card\}, $A=$\{\texttt{suit = "Heart"}\}, and $B$=\{\texttt{rank} is \texttt{7, 8, or 9}\}.
 <<echo=TRUE,print=TRUE>>=
-prob(A, given = B)
-prob(S, suit=="Heart", given = rank %in% 7:9)
-prob(B, given = A)
+Prob(A, given = B)
+Prob(S, suit=="Heart", given = rank %in% 7:9)
+Prob(B, given = A)
 @
 Of course, we know that given the event \texttt{B} has occurred (a 7, 8, 9 has been drawn), the probability that a Heart has been drawn is 1/4.  Similarly, given that the \texttt{suit} is "Heart", there are only three out of the 13 Hearts that are a 7, 8, or 9, so $\P(B|A)=3/13$. We can compute it by going back to the definition of conditional probability:
 <<echo=TRUE,print=TRUE>>=
-prob( intersect(A,B) ) / prob(B)
+Prob( intersect(A,B) ) / Prob(B)
 @
 We have seen that there is some flexibility in the \texttt{given} argument in that it can be either a data frame or it can be a logical expression that defines the subset.  HOWEVER, that flexibility is limited.  In particular, if \texttt{given} is a logical expression, then \texttt{event} must also be specified (also a logical expression).  And in this case, the argument \texttt{x} should be the entire sample space, not a subset thereof, for the reason described in the last section.
 
 \subsubsection*{Pedagogical Notes}
 We can now begin to reap the benefits of this framework.  Suppose we would like to see an example of the General Addition Rule:
 <<echo=TRUE,print=TRUE>>=
-prob( union(A,B) )
-prob(A) + prob(B) - prob(intersect(A,B))
+Prob( union(A,B) )
+Prob(A) + Prob(B) - Prob(intersect(A,B))
 @
 Or perhaps the Multiplication Rule:
 <<echo=TRUE,print=TRUE>>=
-prob( intersect(A,B) )
-prob(A) * prob(B, given = A)
+Prob( intersect(A,B) )
+Prob(A) * Prob(B, given = A)
 @
 We could give evidence that consecutive trials of flipping a coin are independent:
 <<echo=TRUE,print=FALSE>>=
 S = tosscoin(2, makespace = TRUE)
 @
 <<echo=TRUE,print=TRUE>>=
-prob(S, toss2 == "H")
-prob(S, toss2 == "H", given = toss1=="H")
+Prob(S, toss2 == "H")
+Prob(S, toss2 == "H", given = toss1=="H")
 @
 There are many topics available for investigation.  Keep in mind, however, that the point is not that \texttt{R} (or any other software package, for that matter) will ever be an effective surrogate for critical thinking; rather, the point is that statistical tools like \texttt{R} serve to change the classroom landscape, hopefully for the better.  Plus, it's free.
 
@@ -490,7 +490,7 @@ S[1:9,]
 @
 We see by looking at the $U$ column it is operating just like it should.  We can now answer questions like
 <<echo=TRUE,print=TRUE>>=
-prob(S, U > 6)
+Prob(S, U > 6)
 @
 \subsection{Supplying a Function}
 Sometimes we have a function laying around that we would like to apply to some of  the outcome variables, but it is unfortunately tedious to write out the formula defining what the new variable would be.  The \texttt{addrv()} function has an argument \texttt{FUN} specifically for this case.  Its value should be a legitimate function from \texttt{R}, such as \texttt{sum}, \texttt{mean}, \texttt{median}, \emph{etc}.  Or, you can define your own function.   Continuing the previous example, let's define $V=\max(X1,X2,X3)$ and $W = X1+X2+X3$.
@@ -560,10 +560,10 @@ D = subset(N, any(suit=="Spade") & any(rank=="A"))
 @
 Now let's do some probability:
 <<echo=TRUE,print=TRUE>>=
-prob(A)
-prob(B)
-prob(C, given = D)
-prob(D, given = C)
+Prob(A)
+Prob(B)
+Prob(C, given = D)
+Prob(D, given = C)
 @
 We can use \texttt{all(suit=="Heart")} to check for a flush, for instance.   Note that general sample spaces constructed in the above fashion tend to get very large, very quickly.  This has consequences when it comes time to do set algebra and compute conditional probability.  Be warned that these can use a large amount of computing resources.   Since the theme of the \texttt{prob} package leans toward simplicity over efficiency, users interested in doing authentically complicated probability problems would be advised to streamline the \texttt{prob} package functions for their own uses.
 
