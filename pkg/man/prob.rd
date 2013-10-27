@@ -1,4 +1,5 @@
 \name{prob}
+\alias{prob}
 \alias{Prob}
 \alias{Prob.default}
 \alias{Prob.ps}

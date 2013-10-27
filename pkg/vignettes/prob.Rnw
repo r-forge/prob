@@ -15,6 +15,7 @@
 \usepackage{layout}
 \usepackage{color}
 \usepackage{multicol}
+\usepackage[utf8]{inputenc}
 
 \pagenumbering{roman}
 \let\myTOC\tableofcontents

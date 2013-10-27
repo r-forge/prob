@@ -2,6 +2,10 @@
 `Prob` <- function (x, ...)
 UseMethod("Prob")
 
+`prob` <- function (x, ...){
+    message("'prob' is deprecated; use 'Prob' instead.")
+    Prob(x, ...)
+}
 
 `Prob.default` <- function (x, event = NULL, given = NULL, ...){
     if (is.null(x$probs)) {
