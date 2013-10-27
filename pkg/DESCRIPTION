@@ -1,6 +1,6 @@
 Package: prob
-Version: 0.9-3
-Date: 2011-12-19
+Version: 0.9-4
+Date: 2013-10-27
 Title: Elementary Probability on Finite Sample Spaces
 Author: G. Jay Kerns <gkerns@ysu.edu> 
 Maintainer: G. Jay Kerns <gkerns@ysu.edu>
@@ -14,6 +14,6 @@ Description:
  and conditional probability, tools for simulation and checking the law of
  large numbers, adding random variables, and finding marginal distributions.
  Characteristic functions for all base R distributions are included.
-License: GPL (>= 2)
-URL: http://prob.r-forge.r-project.org, http://people.ysu.edu/~gjkerns
+License: GPL (>= 3)
+URL: http://prob.r-forge.r-project.org, http://people.ysu.edu/~gkerns
 

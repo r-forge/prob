@@ -1,10 +1,6 @@
-\batchmode
-\makeatletter
-\def\input@path{{/home/jay/Desktop/mobilew/Research/ExchSim/charfuncs//}}
-\makeatother
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{geometry}
 \geometry{verbose,letterpaper,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
 \setlength{\parskip}{\medskipamount}
@@ -31,7 +27,6 @@
 % \VignetteDepends{prob}
 % \VignetteKeywords{characteristic, function}
 % \VignettePackage{prob}
-
 
 \usepackage{amssymb,latexsym}
 \usepackage[mathscr]{eucal}

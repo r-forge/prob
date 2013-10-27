@@ -1,6 +1,4 @@
 
-
-
 `Prob` <- function (x, ...)
 UseMethod("Prob")
 
@@ -28,7 +26,7 @@ UseMethod("Prob")
     }
     else {
         f <- substitute(given)
-        g <- eval(f, x)
+        g <- eval(f, x, enclos = parent.frame())
         if (!is.logical(g)) {
             if (!is.data.frame(given)) 
                 stop("'given' must be data.frame or evaluate to logical")
@@ -48,9 +46,6 @@ UseMethod("Prob")
 }
 
 
-
-
-
 `Prob.ps` <- function (x, event = NULL, given = NULL, ...){
     if (is.null(x$probs)) {
         message("'space' is missing a probs component")
@@ -62,7 +57,7 @@ UseMethod("Prob")
     else {
         e <- substitute(event)
         r <- sapply(x$outcomes, function(t) {
-            eval(e, t)
+            eval(e, t, enclos=parent.frame())
         })
         if (!is.logical(r)) 
             stop("'event' must evaluate to logical")
@@ -77,7 +72,7 @@ UseMethod("Prob")
     else {
         f <- substitute(given)
         g <- sapply(x$outcomes, function(t) {
-            eval(f, t)
+            eval(f, t, enclos=parent.frame())
         })
         if (!is.logical(g)) {
             if (!is.probspace(given)) 
