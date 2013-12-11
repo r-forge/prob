@@ -2,8 +2,7 @@ Package: prob
 Version: 0.9-5
 Date: 2013-11-20
 Title: Elementary Probability on Finite Sample Spaces
-Author: G. Jay Kerns <gkerns@ysu.edu> 
-Maintainer: G. Jay Kerns <gkerns@ysu.edu>
+Authors@R: person(given = "G. Jay", family = "Kerns", role = c("aut", "cre", "cph"), email = "gkerns@ysu.edu")
 Depends: combinat, fAsianOptions, hypergeo, VGAM
 Description:
  This package provides a framework for performing elementary probability
