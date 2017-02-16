@@ -8,7 +8,10 @@ Generate Independent Two-way Table
 A function to generate a two-way table with independent margins
 }
 \usage{
-genIndepTable(n = sample(100:500, size = 1), prow = 1:3, pcol = 1:4, dmnames = list(X = paste("x", 1:length(prow), sep = ""), Y = paste("y", 1:length(pcol), sep = "")), addmargins = TRUE, as.df = FALSE, untable = TRUE)
+genIndepTable(n = sample(100:500, size = 1), prow = 1:3, pcol = 1:4, 
+dmnames = list(X = paste("x", 1:length(prow), sep = ""), 
+Y = paste("y", 1:length(pcol), sep = "")), addmargins = TRUE, 
+as.df = FALSE, untable = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

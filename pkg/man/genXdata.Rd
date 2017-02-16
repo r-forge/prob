@@ -8,7 +8,8 @@ Generate continuous model matrix data
 This function generates correlated normal data to serve as a model matrix in a regression model.
 }
 \usage{
-genXdata(n, nvar = 1, mu = rep(0, nvar), Sigma = diag(length(mu)), varnames = paste("x", 1:length(mu), sep = ""), roundto = NULL)
+genXdata(n, nvar = 1, mu = rep(0, nvar), Sigma = diag(length(mu)), 
+varnames = paste("x", 1:length(mu), sep = ""), roundto = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

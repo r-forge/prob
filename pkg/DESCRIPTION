@@ -6,7 +6,7 @@ Authors@R: person(given = "G. Jay", family = "Kerns", role = c("aut", "cre", "cp
 Depends: combinat, fAsianOptions
 Suggests: VGAM, reshape, MASS, hypergeo
 Description:
- This package provides a framework for performing elementary probability
+ A framework for performing elementary probability
  calculations on finite sample spaces, which may be represented by data frames
  or lists.  Functionality includes setting up sample spaces, counting tools,
  defining probability spaces, performing set algebra, calculating probability
@@ -14,5 +14,5 @@ Description:
  large numbers, adding random variables, and finding marginal distributions.
  Characteristic functions for all base R distributions are included.
 License: GPL (>= 3)
-URL: http://prob.r-forge.r-project.org, http://people.ysu.edu/~gkerns/
+URL: http://prob.r-forge.r-project.org, http://gkerns.people.ysu.edu/
 

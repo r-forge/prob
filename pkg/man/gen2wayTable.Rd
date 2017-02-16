@@ -8,7 +8,10 @@ Generate Two-way Tables
 A function to randomly generate arbitrary two-way tables
 }
 \usage{
-gen2wayTable(n = sample(100:500, size = 1), pmatrix = matrix(1:12, nrow = 3), dmnames = list(X = paste("x", 1:nrow(pmatrix), sep = ""), Y = paste("y", 1:ncol(pmatrix), sep = "")), addmargins = TRUE, as.df = FALSE, untable = TRUE)
+gen2wayTable(n = sample(100:500, size = 1), pmatrix = matrix(1:12, nrow = 3),
+dmnames = list(X = paste("x", 1:nrow(pmatrix), sep = ""),
+Y = paste("y", 1:ncol(pmatrix), sep = "")), 
+addmargins = TRUE, as.df = FALSE, untable = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
