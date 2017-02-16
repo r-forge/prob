@@ -21,13 +21,14 @@ Characteristic functions for the base probability distributions have been includ
 \details{
 \tabular{ll}{
 Package: \tab prob\cr
-Version: \tab 0.9-5\cr
-Date: \tab 2013-11-20\cr
-Depends: \tab combinat, fAsianOptions, hypergeo, VGAM\cr
+Version: \tab 1.0-0\cr
+Date: \tab 2017-02-15\cr
+Depends: \tab combinat, fAsianOptions\cr
+Suggests: \tab VGAM, hypergeo\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 3 or newer\cr
 URL: \tab http://prob.r-forge.r-project.org,
-http://people.ysu.edu/~gkerns\cr
+http://gkerns.people.ysu.edu/\cr
 }
 
 }

@@ -1,9 +1,10 @@
 Package: prob
-Version: 0.9-5
-Date: 2013-11-20
+Version: 1.0-0
+Date: 2017-02-15
 Title: Elementary Probability on Finite Sample Spaces
 Authors@R: person(given = "G. Jay", family = "Kerns", role = c("aut", "cre", "cph"), email = "gkerns@ysu.edu")
-Depends: combinat, fAsianOptions, hypergeo, VGAM
+Depends: combinat, fAsianOptions
+Suggests: VGAM, reshape, MASS, hypergeo
 Description:
  This package provides a framework for performing elementary probability
  calculations on finite sample spaces, which may be represented by data frames
