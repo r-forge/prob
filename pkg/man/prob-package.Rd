@@ -21,9 +21,9 @@ Characteristic functions for the base probability distributions have been includ
 \details{
 \tabular{ll}{
 Package: \tab prob\cr
-Version: \tab 1.0-0\cr
-Date: \tab 2017-02-15\cr
-Depends: \tab combinat, fAsianOptions\cr
+Version: \tab 1.0-1\cr
+Date: \tab 2017-09-18\cr
+Depends: \tab combinat\cr
 Suggests: \tab VGAM, hypergeo\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 3 or newer\cr
