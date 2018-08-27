@@ -22,9 +22,9 @@ Characteristic functions for the base probability distributions have been includ
 \tabular{ll}{
 Package: \tab prob\cr
 Version: \tab 1.0-1\cr
-Date: \tab 2017-09-18\cr
+Date: \tab 2018-08-27\cr
 Depends: \tab combinat\cr
-Suggests: \tab VGAM, hypergeo\cr
+Suggests: \tab VGAM, reshape, MASS, hypergeo\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 3 or newer\cr
 URL: \tab http://prob.r-forge.r-project.org,
