@@ -2,18 +2,21 @@ importFrom("stats", "aggregate", "dbeta", "dsignrank", "dt",
              "dweibull", "dwilcox", "integrate", "rbinom")
 importFrom("utils", "combn")
 importFrom("combinat", "permn")
+importFrom("fAsianOptions", "kummerU", "kummerM")
 
 # Export all names
 exportPattern(".")
 export(
 addrv,
 cards,
+cfbeta,
 cfbinom,
 cfcauchy,
 cfchisq,
 cfexp,
 cfgamma,
 cfgeom,
+cff,
 cfhyper,
 cflnorm,
 cflogis,

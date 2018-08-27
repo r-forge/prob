@@ -4,10 +4,12 @@
 
 \name{CharFunc}
 \concept{characteristic function}
+\alias{cfbeta}
 \alias{cfbinom}
 \alias{cfcauchy}
 \alias{cfchisq}
 \alias{cfexp}
+\alias{cff}
 \alias{cfgamma}
 \alias{cfgeom}
 \alias{cfhyper}
@@ -32,10 +34,12 @@
 }
 
 \usage{
+cfbeta(t, shape1, shape2, ncp = 0)
 cfbinom(t, size, prob)
 cfcauchy(t, location = 0, scale = 1)
 cfchisq(t, df, ncp = 0)
 cfexp(t, rate = 1)
+cff(t, df1, df2, ncp, kmax = 10)
 cfgamma(t, shape, rate = 1, scale = 1/rate)
 cfgeom(t, prob)
 cfhyper(t, m, n, k)
@@ -54,7 +58,9 @@ cfwilcox(t, m, n)
 \arguments{
   \item{t}{numeric value.  Some of the above are vectorized functions.}
   \item{df}{degrees of freedom (\eqn{> 0}, maybe non-integer)}
+  \item{df1, df2}{degrees of freedom (\eqn{> 0}, maybe non-integer)}
   \item{k}{the number of balls drawn from the urn.}
+  \item{kmax}{upper limit of summation.}
   \item{lambda}{vector of (positive) means.}
   \item{location, scale}{location and scale parameters; scale must be positive.}
   \item{m}{the number of white balls in the urn.}
@@ -69,9 +75,10 @@ cfwilcox(t, m, n)
   \item{prob}{probability of success in each trial.}
   \item{rate}{an alternative way to specify the scale; must be positive.}  
   \item{sd}{vector of standard deviations.}
+  \item{shape}{shape parameter, must be positive (gamma, weibull)}
+  \item{shape1, shape2}{shape parameters (beta).}
   \item{size}{number of trials (binom) or target for number of successful trials
     (nbinom).}
-  \item{shape}{shape parameter, must be positive (gamma, weibull)}
 }
 
 \value{

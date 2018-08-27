@@ -23,7 +23,7 @@ Characteristic functions for the base probability distributions have been includ
 Package: \tab prob\cr
 Version: \tab 1.0-1\cr
 Date: \tab 2018-08-27\cr
-Depends: \tab combinat\cr
+Depends: \tab combinat, fAsianOptions\cr
 Suggests: \tab VGAM, reshape, MASS, hypergeo\cr
 LazyLoad: \tab no\cr
 License: \tab GPL version 3 or newer\cr
